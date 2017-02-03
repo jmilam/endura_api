@@ -145,5 +145,17 @@ class Endura::API < Grape::API
 			  end
 			end
 		end
+
+		resource :irds do
+			desc 'export'
+			post :export do
+				export_data = Base64.decode64(params[:export_data])
+				if IrdsMailer.export_to_csv(params[:from], params[:to], params[:subject], export_data, params[:search_criteria]).deliver
+					return {success: true}
+				else
+					return {success: false}
+				end
+			end
+		end
 	end
 end
