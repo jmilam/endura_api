@@ -1,8 +1,23 @@
 # config valid only for current version of Capistrano
 lock "3.7.1"
 
-set :application, "my_app_name"
-set :repo_url, "git@example.com:me/my_repo.git"
+server "192.168.3.131", port: 22, rolse: [:web, :app, :db], primary: true
+
+set :repo_url, "github.com:jmilam/endura_api.git"
+set :application, "endura_api"
+set :user, "itadmin"
+
+set :use_sudo, false
+set :deploy_via, :reomte_cache
+set :ssh_options,     { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
+
+## Defaults:
+set :scm,           :git
+#set :branch,        :master
+# set :format,        :pretty
+# set :log_level,     :debug
+set :keep_releases, 5
+set :assets_roles, [:web, :app]
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp

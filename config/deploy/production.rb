@@ -30,7 +30,10 @@
 # For available Capistrano configuration variables see the documentation page.
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
-
+set :stage, :production
+set :deploy_to, "/var/www/endura_api/production"
+set :branch, :master
+set :rails_env, 'production'
 
 
 # Custom SSH Options
