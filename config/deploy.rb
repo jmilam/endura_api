@@ -3,7 +3,7 @@ lock "3.7.1"
 
 server "192.168.3.131", port: 22, rolse: [:web, :app, :db], primary: true
 
-set :repo_url, "github.com:jmilam/endura_api.git"
+set :repo_url, "git@github.com:jmilam/endura_api.git"
 set :application, "endura_api"
 set :user, "itadmin"
 

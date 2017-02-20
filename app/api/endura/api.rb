@@ -157,5 +157,17 @@ class Endura::API < Grape::API
 				end
 			end
 		end
+
+		resource :salesforce do 
+			desc 'sales call xls'
+			post :export do 
+				p params[:file]
+				if SalesforceMailer.sales_call_export(params[:from], params[:to], params[:subject], params[:body], params[:file]).deliver
+						return {success: true}
+			  else
+			  	return {success: false}
+			  end
+			end
+		end
 	end
 end
