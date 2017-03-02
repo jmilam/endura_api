@@ -68,6 +68,16 @@ class Endura::API < Grape::API
 
 		desc 'PCT'
 		get :pct do
+			#Hardcoded url for testing, make sure add back dynamic when ready for prod
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?item=212100-2-36&site=2000&loc=DISDD-31&lot=na&tag=02143228&qty=1&remarks=test&eff=02/13/2017&Cr=""CrSite=2000&user=mdraughn").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipct.p?item=212100-2-36&site=2000&loc=DISDD-31&lot=na&tag=02143228&qty=1&remarks=test&eff=02/13/2017&Cr=%22%22&CrSite=2000&user=mdraughn")
+			result = JSON.parse(result, :quirks_mode => true)
+			
+			if result["error"].match(/ERROR/)
+				return {success: false, result: result["error"]}
+			else
+				return {success: true, result: "Success"}
+			end
 		end
 
 		desc 'PLO Next plo_next_pallet'
@@ -94,6 +104,34 @@ class Endura::API < Grape::API
 			else
 				return {success: true, result: "Success"}
 			end
+		end
+	end
+
+	resource :cardinal_printing do
+		format :json
+
+		desc 'Skid Label Printing'
+		get :skid_label do
+			tries = 0
+
+			begin
+				#Hardcoded url for testing, make sure add back dynamic when ready for prod
+        response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbskdprt.p?Site=#{params[:site]}&SKID=#{params[:skid_num]}&Printer=#{params[:printer]}&user=#{params[:user_id]}").get
+        # response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbskdprt.p?Site=#{params[:site]}&SKID=#{params[:skid]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+
+        return {success: true, result: "Success"}
+      rescue
+        if tries == 1
+          break
+        else
+          if tries < 1
+          	tries += 1
+          	retry
+          else
+          	return {success: false, result: "Webspeed error"}
+          end 
+        end
+      end
 		end
 	end
 

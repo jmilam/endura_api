@@ -156,6 +156,20 @@ describe Endura::API do
   describe 'BKF' do
   end
 
+  describe 'Skid Print' do
+    describe 'ability to print Skid label' do
+      before(:each) do
+        @url = '/api/endura/cardinal_printing/skid_label'
+      end
+
+      it 'should print Skid label' do
+        get @url, params: {site: "2000", skid: "s01290018", printer: "3600it", user: "mdraughn"}
+        expect(json["success"]).to eq(true)
+        expect(json["result"]).to eq("Success")
+      end
+    end
+  end
+
   describe 'Emails' do
     describe 'order entry emails' do
       before(:each) do
