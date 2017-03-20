@@ -153,6 +153,27 @@ describe Endura::API do
     end
   end
 
+  describe 'Tag Details' do
+    describe 'get tag details' do
+      before(:each) do
+        @url = '/api/endura/transactions/tag_details'
+      end
+
+      it 'should return tag details' do
+        get @url, params: {tag: "02233582", user: "mdraughn"}
+        tag_info = json["INFO"]
+        expect(tag_info.first["ttitem"]).to eq("139900-01")
+        expect(tag_info.first["ttdesc1"]).to eq("FINGER JOINT and RF GLUE")
+        expect(tag_info.first["tttag"]).to eq("02233582")
+        expect(tag_info.first["ttsite"]).to eq("4300")
+        expect(tag_info.first["ttwh"]).to eq("STK")
+        expect(tag_info.first["ttqtyloc"]).to eq(2512.0)
+        expect(tag_info.first["ttloc"]).to eq("3150")
+
+      end
+    end
+  end
+
   describe 'BKF' do
   end
 

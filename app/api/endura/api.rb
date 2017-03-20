@@ -1,4 +1,5 @@
 class Endura::API < Grape::API
+	require 'net/http'
 	before do
 		if Rails.env == "test"
 			@qadenv = "qadnix"
@@ -105,6 +106,18 @@ class Endura::API < Grape::API
 				return {success: true, result: "Success"}
 			end
 		end
+
+		desc 'Tag Details'
+		get :tag_details do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			return {success: true, result: result["INFO"].last}
+			# if result["error"].match(/ERROR/)
+			# 	return {success: false, result: result["error"]}
+			# else
+			# 	return {success: true, result: "Success"}
+			# end
+		end
 	end
 
 	resource :cardinal_printing do
@@ -199,13 +212,25 @@ class Endura::API < Grape::API
 		resource :salesforce do 
 			desc 'sales call xls'
 			post :export do 
-				p params[:file]
 				if SalesforceMailer.sales_call_export(params[:from], params[:to], params[:subject], params[:body], params[:file]).deliver
 						return {success: true}
 			  else
 			  	return {success: false}
 			  end
 			end
+		end
+
+		resource :time_off_request do
+			desc 'Send email to maanger w/ new request link'
+		  post :manager_update do 
+		  	TimeOffMailer.to_manager(params[:to_email], params[:request_type], params[:start_date], params[:end_date], params[:from_user]).deliver
+		  end
+
+		  desc "Send email to user w/ manager response"
+		  post :user_update do
+		  	approve_status = params[:approved] == "true" ? "Approved" : "Denied"
+		  	TimeOffMailer.to_user(params[:to_email], params[:request_type], params[:start_date], params[:end_date], params[:from_user], approve_status, params[:approved_by]).deliver
+		  end
 		end
 	end
 end

@@ -1,0 +1,5 @@
+<h3 style="text-align:center;"><%= @request_type %> Request</h3>
+<h4 style="text-align:center;"><%= @from_user %></h4>
+
+<p><%= @from_user %> is requesting <%= @request_type %> starting on <%= @start_date %> and ending on <%= @end_date %>.</p>
+<p>Please login and Approve or Reject request at <%= link_to 'Time Off Portal', 'http://localhost:3001' %></p>
