@@ -1,0 +1,71 @@
+<h3 style="text-align:center;">New Order placed by <%= @user %></h3>
+<% unless @order.nil? %>
+	<table style="width:100%;">
+		<tbody>
+			<tr>
+				<td colspan=3 style="text-align:center;">Address</td>
+			</tr>
+			<tr>
+				<td colspan=3 style="text-align:center;"><%= @order['address'] %></td>
+			</tr>
+			<tr>
+				<td><b>City:</b></td>
+				<td><b>State:</b></td>
+				<td><b>Zipcode:</b></td>
+
+			</tr>
+			<tr>
+				<td><%= @order['city'] %></td>
+				<td><%= @order['state'] %></td>
+				<td><%= @order['zipcode'] %></td>
+			</tr>
+			<tr>
+				<td><b>Order Reason:</b></td>
+				<td><b>Deadline:</b></td>
+				<td><b>Deadline Reason:</b></td>
+			</tr>
+			<tr>
+				<td><%= @order['order_reason'] %></td>
+				<td><%= @order['deadline'] %></td>
+				<td><%= @order['deadline_reason'] %></td>
+			</tr>
+			<tr>
+				<td colspan=2><b>Payment Method:</b></td>
+				<td/>
+			</tr>
+			<tr>
+				<td colspan=2><%= @order['payment_method'] %></td>
+				<td><%= link_to "Approve/Decline", "http://localhost:3001/order/#{@order['id']}" %></td>
+			</tr>
+		</tbody>
+	</table>
+<% end %>
+<table style="width:100%;">
+	<thead>
+		<tr style="background-color:#AAAAAA;height:75px;">
+			<th colspan=4>Order Number <%= @order['id'] %>
+		</tr>
+		<tr style="height:25px;border-bottom: 1px solid black;">
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Item Type</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Quantity</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Item Total</th>
+			<th style="border-bottom: 1px solid black;">Item Notes</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @items.each do |item| %>
+			<tr style="height:50px;">
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= item['item_type'].titlecase %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= item['quantity'] %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= number_to_currency(item['item_total']) %></td>
+				<td style="border-bottom: 1px solid black;"><%= item['note'] %></td>
+			</tr>
+		<% end %>
+		<tr style="height:50px;background-color:#AAAAAA;">
+			<td style="text-align:center;">Total</td>
+			<td style="text-align:center;"><%= @items.count %></td>
+			<td style="text-align:center;"><%= number_to_currency(@sum) %></td>
+			<td style="text-align:center;"></td>
+		</tr>
+	</tbody>
+</table>

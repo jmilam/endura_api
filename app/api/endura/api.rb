@@ -4,12 +4,15 @@ class Endura::API < Grape::API
 		if Rails.env == "test"
 			@qadenv = "qadnix"
 			@apienv = "testapi"
+			@time_off_url = "http://request_off_test.enduraproducts.com"
 		elsif Rails.env == "development"
 			@qadenv = "qadnix"
 			@apienv = "devapi"
+			@time_off_url = "http://localhost:3001"
 		elsif Rails.env == "production"
 			@qadenv = "qadprod"
 			@apienv = "prodapi"
+			@time_off_url = "http://request_off.enduraproducts.com"
 		end
 	end
 	
@@ -57,7 +60,7 @@ class Endura::API < Grape::API
 
 		desc 'PMV'
 		get :pmv do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&loc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
@@ -70,7 +73,7 @@ class Endura::API < Grape::API
 		desc 'PCT'
 		get :pct do
 			#Hardcoded url for testing, make sure add back dynamic when ready for prod
-			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?item=212100-2-36&site=2000&loc=DISDD-31&lot=na&tag=02143228&qty=1&remarks=test&eff=02/13/2017&Cr=""CrSite=2000&user=mdraughn").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?item=#{params[:item_num]}&site=#{params[:to_site]}&loc=#{params[:to_loc]}&lot=&tag=#{params[:tag]}&qty=#{params[:qty_to_move]}&remarks=&eff=#{Date.today.strftime("%m/%d/%Y")}&Cr=&CrSite=&user=#{params[:user_id]}").get
 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipct.p?item=212100-2-36&site=2000&loc=DISDD-31&lot=na&tag=02143228&qty=1&remarks=test&eff=02/13/2017&Cr=%22%22&CrSite=2000&user=mdraughn")
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -95,8 +98,7 @@ class Endura::API < Grape::API
 
 		desc 'PLO'
 		get :plo do
-			pallet = JSON.parse(HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapinextpal.p").get)
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiplo.p?item=#{params[:item_num]}&floc=#{params[:from_loc]}&fsite=#{params[:from_site]}&tsite=#{params[:to_site]}&tloc=#{params[:to_loc]}&tref=#{pallet['NextPallet']}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}&type=PLO").get
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiplo.p?item=#{params[:item_num]}&floc=#{params[:from_loc]}&fsite=#{params[:from_site]}&tsite=#{params[:to_site]}&tloc=#{params[:to_loc]}&tref=#{params[:tag]}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}&type=PLO").get
 			
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -111,12 +113,13 @@ class Endura::API < Grape::API
 		get :tag_details do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
-			return {success: true, result: result["INFO"].last}
-			# if result["error"].match(/ERROR/)
-			# 	return {success: false, result: result["error"]}
-			# else
-			# 	return {success: true, result: "Success"}
-			# end
+			@success = false
+
+			unless result["success"] == "Tag Loc Not Found"
+				@success = true
+			end
+
+			return {success: @success, result: result["INFO"].last}
 		end
 	end
 
@@ -230,6 +233,27 @@ class Endura::API < Grape::API
 		  post :user_update do
 		  	approve_status = params[:approved] == "true" ? "Approved" : "Denied"
 		  	TimeOffMailer.to_user(params[:to_email], params[:request_type], params[:start_date], params[:end_date], params[:from_user], approve_status, params[:approved_by]).deliver
+		  end
+
+		  desc "Send email to maanger when time off is tomorrow"
+		  get :tomorrow_requests do
+		  	result = HttpRequest.new("#{@time_off_url}/time_off_request/tomorrow_requests.json").get
+				result = JSON.parse(result)
+				TimeOffMailer.notify_dept(params[:to_email], result["requests"]).deliver
+		  end
+		end
+
+		resource :marketing do
+			desc 'Send email to tsm w/ link to Approve/Reject Order'
+		  post :tsm_notification do
+		  	 MarketingMailer.notify_tsm_new_order(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
+		  	{success: true}
+		  end
+
+		  desc 'Send email to rep w/ link to view accepted/rejected'
+		  post :rep_notification do
+		  		MarketingMailer.notify_rep_order_status(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order])).deliver
+		  	{success: true}
 		  end
 		end
 	end

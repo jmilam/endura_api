@@ -18,4 +18,9 @@ class TimeOffMailer < ApplicationMailer
 
   	mail(from: "time_off@enduraproducts.com", to: to_address, subject: "#{request_type} request has been #{approved_status}.")
   end
+
+  def notify_dept(to_address, data)
+  	@requests = data
+  	mail(from: "time_off@enduraproducts.com", to: to_address, subject: "Employees not here tomorrow.")
+  end
 end
