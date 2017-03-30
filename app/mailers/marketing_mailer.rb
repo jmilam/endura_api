@@ -6,7 +6,7 @@ class MarketingMailer < ApplicationMailer
 			@order = order
 			@sum = @items.inject(0) {|sum, item| sum += item['item_total']}
 			
-			mail(from: "new_order@enduraproducts.com", to: to_email, subject: "New Order placed by #{user}")
+			mail(from: "new_order@enduraproducts.com", to: to_email, cc: from_email, subject: "New Order placed by #{user}")
 	end
 
 	def notify_rep_order_status(from_email, to_email, user, order)

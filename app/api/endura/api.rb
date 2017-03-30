@@ -34,6 +34,12 @@ class Endura::API < Grape::API
 	resource :transactions do
 		format :json
 
+		desc 'Item Location'
+		get :item_location do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipartloc.p?part=#{params[:item_num]}&user=#{params[:user_id]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+		end
+		
 		desc 'PDL'
 		get :pdl do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
