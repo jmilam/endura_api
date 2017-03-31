@@ -1,0 +1,17 @@
+<table style="width:100%;">
+	<thead>
+		<tr style="background-color:#d9534f;height:25px;border-bottom: 1px solid black;">
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Employee</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Current Balance</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @users.each do |user| %>
+			<tr style="height:50px;">
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= user[:name] %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= user[:outstanding] %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+

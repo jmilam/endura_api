@@ -262,5 +262,35 @@ class Endura::API < Grape::API
 		  	{success: true}
 		  end
 		end
+
+		resource :reminder do
+			desc 'Email reminder of Upcoming Week time off requests'
+			post :upcoming_week_off do
+				requests = JSON.parse(params[:requests])
+				managers = JSON.parse(params[:managers])
+				users = JSON.parse(params[:users])
+				requests.each do |r|
+					manager = managers.select {|manager| manager['id'] == r['manager_id']}[0]
+					user = users.select {|user| user['id'] == r['user_id']}[0]
+					mail = TimeOffMailer.upcoming_time_off r, manager, user 
+					mail.deliver
+				end
+
+				managers.each do |m|
+					emp_req = requests.select {|r| r['manager_id'] == m['id']}
+					mail = TimeOffMailer.upcoming_time_off_manager m, emp_req, users
+					mail.deliver
+				end
+			end
+
+			desc 'Email update to Manager on July 1 about remaining balances over 112 hours'
+			post :users_over_112 do
+				remaining_bal = eval params[:data]
+				remaining_bal.each do |key, value|
+					mail = TimeOffMailer.over_112_hours_to_manager key, value 
+					mail.deliver
+				end
+			end
+		end
 	end
 end

@@ -23,4 +23,22 @@ class TimeOffMailer < ApplicationMailer
   	@requests = data
   	mail(from: "time_off@enduraproducts.com", to: to_address, subject: "Employees not here tomorrow.")
   end
+
+  def upcoming_time_off(request, user, manager)
+  	@request = request
+  	@user = user
+
+  	mail from: "time_off@enduraproducts.com", to: user['email'], subject: "Don't forget you're #{request['time_off_type.downcase']} next week!"
+  end
+
+  def upcoming_time_off_manager(manager, requests, users)
+  	@requests = requests
+  	@users = users
+  	mail from: "time_off@enduraproducts.com", to: manager['email'], subject: "You have employees off this week."
+  end
+
+  def over_112_hours_to_manager(manager, users)
+  	@users = users
+  	mail from: "time_off@enduraproducts.com", to: manager, subject: "Employees with over 112 hours remaining."
+  end
 end
