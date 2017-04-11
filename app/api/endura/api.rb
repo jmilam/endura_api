@@ -66,6 +66,7 @@ class Endura::API < Grape::API
 
 		desc 'PMV'
 		get :pmv do
+			params[:type] = params[:type].match(/\w+/)[0]
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -79,7 +80,8 @@ class Endura::API < Grape::API
 		desc 'PCT'
 		get :pct do
 			#Hardcoded url for testing, make sure add back dynamic when ready for prod
-			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?item=#{params[:item_num]}&site=#{params[:to_site]}&loc=#{params[:to_loc]}&lot=&tag=#{params[:tag]}&qty=#{params[:qty_to_move]}&remarks=&eff=#{Date.today.strftime("%m/%d/%Y")}&Cr=&CrSite=&user=#{params[:user_id]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?site=#{params[:to_site]}&tag=#{params[:tag]}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}").get
+			# result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipct.p?item=#{params[:item_num]}&site=#{params[:to_site]}&loc=#{params[:to_loc]}&lot=&tag=#{params[:tag]}&qty=#{params[:qty_to_move]}&remarks=&eff=#{Date.today.strftime("%m/%d/%Y")}&Cr=&CrSite=&user=#{params[:user_id]}").get
 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipct.p?item=212100-2-36&site=2000&loc=DISDD-31&lot=na&tag=02143228&qty=1&remarks=test&eff=02/13/2017&Cr=%22%22&CrSite=2000&user=mdraughn")
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -115,6 +117,29 @@ class Endura::API < Grape::API
 			end
 		end
 
+		desc 'TPT'
+		get :tpt do
+			response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+			return {success: true, result: "Label is reprinting..."}
+		end
+
+		desc 'GLB'
+		get :glb do
+			response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbglbprt.p?info=#{params[:remarks]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+			return {success: true, result: "Label is printing..."}
+		end
+
+		desc 'Validate PO Number'
+		get :po_details do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipolines.p?po=#{params[:po_number]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			if result["error"].match(/PO not found/)
+				return {success: false, result: result["error"]}
+			else
+				return {success: true, result: result}
+			end
+		end
+
 		desc 'Tag Details'
 		get :tag_details do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
@@ -127,6 +152,7 @@ class Endura::API < Grape::API
 
 			return {success: @success, result: result["INFO"].last}
 		end
+
 	end
 
 	resource :cardinal_printing do
@@ -155,7 +181,13 @@ class Endura::API < Grape::API
         end
       end
 		end
+		
+		desc 'Print label by Tag Number'
+		get :print_label do
+			response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+		end
 	end
+
 
 	resource :picklist do
 		format :json
