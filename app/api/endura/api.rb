@@ -36,13 +36,15 @@ class Endura::API < Grape::API
 
 		desc 'Item Location'
 		get :item_location do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipartloc.p?part=#{params[:item_num]}&user=#{params[:user_id]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipartloc.p?part=#{params[:item_num]}&user=#{params[:user_id]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipartloc.p?part=#{params[:item_num]}&user=#{params[:user_id]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 		end
 		
 		desc 'PDL'
 		get :pdl do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
@@ -54,7 +56,8 @@ class Endura::API < Grape::API
 
 		desc 'PUL'
 		get :pul do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
 	    result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
@@ -67,7 +70,8 @@ class Endura::API < Grape::API
 		desc 'PMV'
 		get :pmv do
 			params[:type] = params[:type].match(/\w+/)[0]
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
@@ -94,7 +98,8 @@ class Endura::API < Grape::API
 
 		desc 'PLO Next plo_next_pallet'
 		get :plo_next_pallet do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapinextpal.p").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapinextpal.p").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapinextpal.p").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["NextPallet"].empty?
@@ -106,7 +111,8 @@ class Endura::API < Grape::API
 
 		desc 'PLO'
 		get :plo do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiplo.p?item=#{params[:item_num]}&floc=#{params[:from_loc]}&fsite=#{params[:from_site]}&tsite=#{params[:to_site]}&tloc=#{params[:to_loc]}&tref=#{params[:tag]}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}&type=PLO").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapiplo.p?item=#{params[:item_num]}&floc=#{params[:from_loc]}&fsite=#{params[:from_site]}&tsite=#{params[:to_site]}&tloc=#{params[:to_loc]}&tref=#{params[:tag]}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}&type=PLO").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiplo.p?item=#{params[:item_num]}&floc=#{params[:from_loc]}&fsite=#{params[:from_site]}&tsite=#{params[:to_site]}&tloc=#{params[:to_loc]}&tref=#{params[:tag]}&qty=#{params[:qty_to_move]}&user=#{params[:user_id]}&type=PLO").get
 			
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -120,18 +126,28 @@ class Endura::API < Grape::API
 		desc 'TPT'
 		get :tpt do
 			response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+			# response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
 			return {success: true, result: "Label is reprinting..."}
 		end
 
 		desc 'GLB'
 		get :glb do
 			response = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxmbglbprt.p?info=#{params[:remarks]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+			# response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbglbprt.p?info=#{params[:remarks]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
 			return {success: true, result: "Label is printing..."}
 		end
 
+		desc 'POR'
+		get :por do
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{params[:line]}&qty=#{params[:qty]}&loc=#{params[:location]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{params[:line]}&qty=#{params[:qty]}&loc=#{params[:location]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+			p result = JSON.parse(result, :quirks_mode => true)
+		end
+		
 		desc 'Validate PO Number'
 		get :po_details do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipolines.p?po=#{params[:po_number]}&user=#{params[:user]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapipolines.p?po=#{params[:po_number]}&user=#{params[:user]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipolines.p?po=#{params[:po_number]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			if result["error"].match(/PO not found/)
 				return {success: false, result: result["error"]}
@@ -142,7 +158,8 @@ class Endura::API < Grape::API
 
 		desc 'Tag Details'
 		get :tag_details do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
+			result = HttpRequest.new("http://qadnix.endura.enduraproducts.com/cgi-bin/devapi/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv.p?tag=#{params[:tag]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			@success = false
 
