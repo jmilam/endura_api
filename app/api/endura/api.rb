@@ -130,7 +130,13 @@ class Endura::API < Grape::API
 		desc 'POR'
 		get :por do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{params[:line]}&qty=#{params[:qty]}&loc=#{params[:location]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-			p result = JSON.parse(result, :quirks_mode => true)
+			result = JSON.parse(result, :quirks_mode => true)
+
+			if result["Error"].match(/ERROR/)
+				return {success: false, result: result["Error"]}
+			else
+				return {success: true, result: "Success", tag_num: result["Tag"]}
+			end
 		end
 		
 		desc 'Validate PO Number'
