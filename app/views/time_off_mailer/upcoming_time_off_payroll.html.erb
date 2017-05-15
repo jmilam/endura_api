@@ -1,0 +1,24 @@
+<table style="width:100%;">
+	<thead>
+		<tr style="background-color:#d9534f;height:75px;">
+			<th colspan=4>Employees off <%= Date.today.next_week.beginning_of_week.strftime('%m/%d/%Y') %> - <%= Date.today.next_week.end_of_week.strftime('%m/%d/%Y') %>
+		</tr>
+		<tr style="height:25px;border-bottom: 1px solid black;">
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Employee</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Start Date</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">End Date</th>
+			<th style="border-right: 1px solid black;border-bottom: 1px solid black;">Type</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @requests.each do |request| %>
+			<% user = @users.select {|user| user['id'] == request['user_id']}[0] %>
+			<tr style="height:50px;">
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= user['first_name'] %> <%= user['last_name'] %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= request['date_start'].to_date.strftime("%m/%d/%Y") %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= request['date_end'].to_date.strftime("%m/%d/%Y") %></td>
+				<td style="text-align:center;border-right: 1px solid black;border-bottom: 1px solid black;"><%= request['time_off_type'] %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>

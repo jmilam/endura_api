@@ -37,6 +37,13 @@ class TimeOffMailer < ApplicationMailer
   	mail from: "time_off@enduraproducts.com", to: manager['email'], subject: "You have employees off this week."
   end
 
+  def upcoming_time_off_payroll(user, requests, users)
+    p user
+    @requests = requests
+    @users = users
+    mail from: "time_off@enduraproducts.com", to: user['email'], subject: "All employees off this week."
+  end
+
   def over_112_hours_to_manager(manager, users)
   	@users = users
   	mail from: "time_off@enduraproducts.com", to: manager, subject: "Employees with over 112 hours remaining."

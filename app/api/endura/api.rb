@@ -393,6 +393,8 @@ class Endura::API < Grape::API
 				requests = JSON.parse(params[:requests])
 				managers = JSON.parse(params[:managers])
 				users = JSON.parse(params[:users])
+				p payroll_users = JSON.parse(params[:payroll_users])
+
 				requests.each do |r|
 					manager = managers.select {|manager| manager['id'] == r['manager_id']}[0]
 					user = users.select {|user| user['id'] == r['user_id']}[0]
@@ -403,6 +405,11 @@ class Endura::API < Grape::API
 				managers.each do |m|
 					emp_req = requests.select {|r| r['manager_id'] == m['id']}
 					mail = TimeOffMailer.upcoming_time_off_manager m, emp_req, users
+					mail.deliver
+				end
+
+				payroll_users.each do |pu|
+					mail = TimeOffMailer.upcoming_time_off_payroll pu, requests, users
 					mail.deliver
 				end
 			end

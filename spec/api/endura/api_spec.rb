@@ -205,5 +205,16 @@ describe Endura::API do
         expect(json["success"]).to eq(true)
       end
     end
+
+    describe 'Reminders' do
+      describe 'Sends an email of all upcoming week off' do
+        before :each do 
+          @url = '/api/endura/email/reminder/upcoming_week_off'
+        end
+
+        it 'should send email for upcoming week off' do
+        end
+      end
+    end
   end
 end
