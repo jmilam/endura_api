@@ -138,6 +138,56 @@ class Endura::API < Grape::API
 				return {success: true, result: "Success", tag_num: result["Tag"]}
 			end
 		end
+
+		desc 'CAR'
+		get :car do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapicarcim.p?so=#{params[:so]}&line=#{params[:line]}&cartonbox=#{params[:carton_box]}&PackQty=#{params[:pack_qty]}&PackedQty=#{params[:prev_packed]}&Bulk=#{params[:print]}&printer=#{params[:printer]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			
+			if result["error"].match(/ERROR/)
+				return {success: false, result: result["error"]}
+			else
+				return {success: true, result: "Success"}
+			end
+		end
+
+		desc 'CTE'
+		get :cte do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapicardel.p?carton=#{params[:carton]}&site=#{params[:site]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			
+			if result["error"].downcase.match(/error/)
+				return {success: false, result: result["status"]}
+			else
+				return {success: true, result: "Success"}
+			end
+		end
+
+		desc 'Skid Create Cartons'
+		get :skid_create_cartons do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdso.p?SO=#{params[:sales_order]}&site=#{params[:site]}&Line=All&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			
+			if result["error"].downcase.match(/error/)
+				return {success: false, result: result["status"]}
+			elsif result["Cartons"].empty?
+				return {success: false, result: result["error"]}
+			else
+				return {success: true, result: result["Cartons"]}
+			end
+		end
+
+		desc 'Skid Create'
+		get :skid_create do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdcreate.p?user=#{params[:user]}&skid=#{params[:skid]}&site=#{params[:site]}&cartons=#{params[:cartons]}").get
+			p result = JSON.parse(result, :quirks_mode => true)
+
+			if result["error"].match(/PO not found/)
+				return {success: false, result: result["error"]}
+			else
+				return {success: true, result: result}
+			end
+		end
 		
 		desc 'Validate PO Number'
 		get :po_details do
@@ -161,6 +211,39 @@ class Endura::API < Grape::API
 			end
 
 			return {success: @success, result: result["INFO"].last}
+		end
+
+		desc 'Sales Order Details'
+		get :sales_order_details do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapicardis.p?so=#{params[:so_number]}&user=#{params[:user]}").get
+			
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
+
+		desc 'Item Lookup'
+		get :item_lookup do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetlocs.p?part=#{params[:part]}&site=#{params[:site]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
+
+		desc 'Carton Box Validation'
+		get :carton_box_validation do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapicarbox.p?box=#{params[:box]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
+
+		desc 'Check if skid exist'
+		get :skid_exist do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdexist.p?userid=#{params[:user]}&skid=#{params[:skid]}&site=#{params[:site]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
 		end
 
 	end
@@ -271,7 +354,7 @@ class Endura::API < Grape::API
 		end
 
 		resource :time_off_request do
-			desc 'Send email to maanger w/ new request link'
+			desc 'Send email to manger w/ new request link'
 		  post :manager_update do 
 		  	TimeOffMailer.to_manager(params[:to_email], params[:request_type], params[:start_date], params[:end_date], params[:from_user]).deliver
 		  end
