@@ -165,7 +165,8 @@ class Endura::API < Grape::API
 
 		desc 'Skid Create Cartons'
 		get :skid_create_cartons do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdso.p?SO=#{params[:sales_order]}&site=#{params[:site]}&Line=All&user=#{params[:user]}").get
+			params[:line] = params[:line].empty? ? "All" : params[:line]
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdso.p?SO=#{params[:so_number]}&site=#{params[:site]}&Line=#{params[:line]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].downcase.match(/error/)
@@ -180,7 +181,7 @@ class Endura::API < Grape::API
 		desc 'Skid Create'
 		get :skid_create do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdcreate.p?user=#{params[:user]}&skid=#{params[:skid]}&site=#{params[:site]}&cartons=#{params[:cartons]}").get
-			p result = JSON.parse(result, :quirks_mode => true)
+			result = JSON.parse(result, :quirks_mode => true)
 
 			if result["error"].match(/PO not found/)
 				return {success: false, result: result["error"]}
@@ -219,6 +220,13 @@ class Endura::API < Grape::API
 			
 			result = JSON.parse(result, :quirks_mode => true)
 
+			if result["status"] == "Good"
+				result["Lines"].delete_if {|line| line["ttli"].to_s != params[:line_number]}
+			else
+				result
+			end
+
+			p result
 			return result
 		end
 
