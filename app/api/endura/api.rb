@@ -129,13 +129,28 @@ class Endura::API < Grape::API
 
 		desc 'POR'
 		get :por do
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{params[:line]}&qty=#{params[:qty]}&loc=#{params[:location]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-			result = JSON.parse(result, :quirks_mode => true)
+			return_val = nil
 
-			if result["Error"].match(/ERROR/)
-				return {success: false, result: result["Error"]}
+			params[:lines].zip(params[:qtys], params[:locations]).each do |request_data|
+				result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+			  result = JSON.parse(result, :quirks_mode => true)
+
+			  if result["Error"].match(/ERROR/)
+					return_val = {success: false, result: result["Error"]}
+					break
+				else
+					unless result["Tag"].empty?
+				  	1.upto(params[:label_count].to_i) do
+				    	HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+						end
+					end
+				end
+			end	
+
+			if return_val.nil?
+				return {success: true, result: "Success"}
 			else
-				return {success: true, result: "Success", tag_num: result["Tag"]}
+				return return_value
 			end
 		end
 
@@ -165,7 +180,7 @@ class Endura::API < Grape::API
 
 		desc 'Skid Create Cartons'
 		get :skid_create_cartons do
-			params[:line] = params[:line].empty? ? "All" : params[:line]
+			params[:line] = params[:line].nil? ? "All" : params[:line]
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapiskdso.p?SO=#{params[:so_number]}&site=#{params[:site]}&Line=#{params[:line]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -226,7 +241,6 @@ class Endura::API < Grape::API
 				result
 			end
 
-			p result
 			return result
 		end
 
