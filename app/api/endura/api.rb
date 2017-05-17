@@ -67,7 +67,7 @@ class Endura::API < Grape::API
 		desc 'PMV'
 		get :pmv do
 			params[:type] = params[:type].match(/\w+/)[0]
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/devapi/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
