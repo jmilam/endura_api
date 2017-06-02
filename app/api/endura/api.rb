@@ -185,6 +185,30 @@ class Endura::API < Grape::API
 			end
 		end
 
+		desc 'SHP'
+		get :shp do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishprun.p?string=#{params[:string]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+			
+			if result["Status"]
+				{success: true, result: ""}
+			else
+				{success: false, result: result["error"]}
+			end
+		end
+
+		desc 'Get Shipping Lines'
+		get :ship_lines do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			if result["Status"]
+				return {success: true, result: result["Lines"]}
+			else
+				return {success: false, result: result["error"]}
+			end
+		end
+
 		desc 'Skid Create Cartons'
 		get :skid_create_cartons do
 			params[:line] = params[:line].nil? ? "All" : params[:line]
