@@ -24,8 +24,9 @@ class Endura::API < Grape::API
 		get :login do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapimblogin.p?userid=#{params[:username]}&password=#{params[:password]}&site=#{params[:site]}").get
 			result = JSON.parse(result, :quirks_mode => true)
+
 			if result["users"][0]["tt_userid"].downcase.match(/good login/)
-				return {success: true, result: result["users"][0]["tt_userid"]}
+				return {success: true, result: result["users"][0]["tt_userid"], user_roles: result["roles"][0]["tt_rolename"]}
 			else
 				return {success: false, result: result["users"][0]["tt_userid"]}
 			end
