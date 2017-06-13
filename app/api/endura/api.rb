@@ -198,6 +198,14 @@ class Endura::API < Grape::API
 			end
 		end
 
+		desc 'BKF'
+		get :bkf do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapibkfrun.p?site=#{params[:site]}&part=#{params[:part]}&user=#{params[:user]}&pl=#{params[:prod_line]}&qty=#{params[:qty]}").get
+			p result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
+
 		desc 'Get Shipping Lines'
 		get :ship_lines do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
@@ -300,6 +308,15 @@ class Endura::API < Grape::API
 			return result
 		end
 
+		desc 'Get Product lines associated to an item number'
+		#http://qadnix.endura.enduraproducts.com/cgi-bin/testapi/xxapibkfpl.p?site=2000&part=73Z7815BFS-2-72&user=mdraughn
+
+		get :bkf_product_lines do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapibkfpl.p?site=#{params[:site]}&part=#{params[:part]}&user=#{params[:user]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
 	end
 
 	resource :cardinal_printing do
