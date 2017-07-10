@@ -8,7 +8,7 @@ class Endura::API < Grape::API
 		elsif Rails.env == "development"
 			@qadenv = "qadnix"
 			@apienv = "testapi"
-			@apienv = "devapi"
+			# @apienv = "devapi"
 			# @time_off_url = "http://localhost:3001"
 		elsif Rails.env == "production"
 			@qadenv = "qadprod"
@@ -44,6 +44,14 @@ class Endura::API < Grape::API
 				return {success: false}
 			end
 		end
+
+		desc 'Get Tag Information for SHP function'
+		get :get_tag_info do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapigetinv1.p?tag=#{params[:tag]}&user=#{params[:user]}&site=#{params[:site]}").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
 	end
 
 	resource :transactions do
@@ -58,7 +66,6 @@ class Endura::API < Grape::API
 		desc 'PDL'
 		get :pdl do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=#{params[:to_site]}&tsite=#{params[:from_site]}&user=#{params[:user_id]}&type=#{params[:type]}").get
-			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
