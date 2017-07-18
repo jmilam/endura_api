@@ -155,20 +155,21 @@ class Endura::API < Grape::API
 		get :por do
 			params[:printer] = params[:dev].nil? ? params[:printer] : params[:dev]
 			return_val = nil
-
 			params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
-				1.upto(request_data[3].to_i) do
-					result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-				  result = JSON.parse(result, :quirks_mode => true)
-				
-
-				  if result["Error"].match(/ERROR/)
-						return_val = {success: false, result: result["Error"]}
-						break
-					else
-						unless result["Tag"].empty?
-					  	1.upto(params[:label_count].to_i) do
-					    	HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+				unless request_data[1].empty?
+					1.upto(request_data[3].to_i) do
+						result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+					  result = JSON.parse(result, :quirks_mode => true)
+					
+	
+					  if result["Error"].match(/ERROR/)
+							return_val = {success: false, result: result["Error"]}
+							break
+						else
+							unless result["Tag"].empty?
+						  	1.upto(params[:label_count].to_i) do
+						    	HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+								end
 							end
 						end
 					end
@@ -229,8 +230,8 @@ class Endura::API < Grape::API
 		desc 'Get Shipping Lines'
 		get :ship_lines do
 			#Original JSON API URL
-			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines1.p?so=#{params[:so_number]}&user=#{params[:user]}&line=#{params[:line_number]}").get
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
+			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines1.p?so=#{params[:so_number]}&user=#{params[:user]}&line=#{params[:line_number]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 
 			if result["Status"]
