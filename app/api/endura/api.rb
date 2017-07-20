@@ -147,7 +147,7 @@ class Endura::API < Grape::API
 
 		desc 'GLB'
 		get :glb do
-			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbglbprt.p?info=#{params[:remarks]}&Printer=#{params[:printer]}&user=#{params[:user_id]}").get
+			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbglbprt.p?info=#{params[:remarks]}&Printer=#{params[:printer]}&site=#{params[:site]}&user=#{params[:user_id]}").get
 			return {success: true, result: "Label is printing..."}
 		end
 
@@ -209,6 +209,7 @@ class Endura::API < Grape::API
 
 		desc 'SHP'
 		get :shp do
+			p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishprun.p?string=#{params[:string]}&user=#{params[:user]}"
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishprun.p?string=#{params[:string]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
@@ -370,7 +371,7 @@ class Endura::API < Grape::API
 		
 		desc 'Print label by Tag Number'
 		get :print_label do
-			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}").get
+			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}&site=#{params[:site]}").get
 		end
 	end
 
