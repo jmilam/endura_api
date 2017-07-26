@@ -168,7 +168,9 @@ class Endura::API < Grape::API
 						else
 							unless result["Tag"].empty?
 							 	1.upto(params[:label_count].to_i) do
-						   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
+
+							 		p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}"
+						   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
 								end
 							end
 						end
