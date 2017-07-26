@@ -167,8 +167,8 @@ class Endura::API < Grape::API
 							break
 						else
 							unless result["Tag"].empty?
-						  	1.upto(params[:label_count].to_i) do
-						    	HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}").get
+							 	1.upto(params[:label_count].to_i) do
+						   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result["Tag"]}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
 								end
 							end
 						end
@@ -371,8 +371,6 @@ class Endura::API < Grape::API
 		
 		desc 'Print label by Tag Number'
 		get :print_label do
-			p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}"
-			
 			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}&site=#{params[:site]}").get
 		end
 	end
