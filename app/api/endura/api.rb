@@ -8,8 +8,6 @@ class Endura::API < Grape::API
 		elsif Rails.env == "development"
 			@qadenv = "qadnix"
 			@apienv = "testapi"
-			# @apienv = "devapi"
-			# @time_off_url = "http://localhost:3001"
 		elsif Rails.env == "production"
 			@qadenv = "qadprod"
 			@apienv = "prodapi"
@@ -161,15 +159,14 @@ class Endura::API < Grape::API
 						result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
 					  result = JSON.parse(result, :quirks_mode => true)
 					
-	
-					  if result["Error"].match(/ERROR/)
+						error_count = result["Status"].match(/\d+/).nil? ? "0" : (result["Status"].match(/\d+/)[0]).to_i
+
+					  if error_count > 0
 							return_val = {success: false, result: result["Error"]}
 							break
 						else
 							unless result["Tag"].empty?
 							 	1.upto(params[:label_count].to_i) do
-
-							 		p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}"
 						   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
 								end
 							end
