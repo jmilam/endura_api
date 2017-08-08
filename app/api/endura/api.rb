@@ -76,7 +76,6 @@ class Endura::API < Grape::API
 		desc 'PUL'
 		get :pul do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=#{params[:to_site]}&tsite=#{params[:to_site]}&user=#{params[:user_id]}&type=#{params[:type]}").get
-			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=2000&tsite=2000&user=#{params[:user_id]}&type=#{params[:type]}").get
 	    result = JSON.parse(result, :quirks_mode => true)
 			
 			if result["error"].match(/ERROR/)
@@ -151,34 +150,38 @@ class Endura::API < Grape::API
 
 		desc 'POR'
 		get :por do
-			params[:printer] = params[:dev].nil? ? params[:printer] : params[:dev]
-			return_val = nil
-			params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
-				unless request_data[1].empty?
-					1.upto(request_data[3].to_i) do
-						result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-					  result = JSON.parse(result, :quirks_mode => true)
-					
-						error_count = result["Status"].match(/\d+/).nil? ? "0" : (result["Status"].match(/\d+/)[0]).to_i
-
-					  if error_count > 0
-							return_val = {success: false, result: result["Error"]}
-							break
-						else
-							unless result["Tag"].empty?
-							 	1.upto(params[:label_count].to_i) do
-						   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
+			begin
+				params[:printer] = params[:dev].nil? ? params[:printer] : params[:dev]
+				return_val = nil
+				params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
+					unless request_data[1].empty?
+						1.upto(request_data[3].to_i) do
+							result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+						  result = JSON.parse(result, :quirks_mode => true)
+						
+							error_count = result["Status"].match(/\d+/).nil? ? "0" : (result["Status"].match(/\d+/)[0]).to_i
+	
+						  if error_count > 0
+								return_val = {success: false, result: result["Error"]}
+								break
+							else
+								unless result["Tag"].empty?
+								 	1.upto(params[:label_count].to_i) do
+							   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
+									end
 								end
 							end
 						end
 					end
+				end	
+	
+				if return_val.nil?
+					return {success: true, result: "Success"}
+				else
+					return return_value
 				end
-			end	
-
-			if return_val.nil?
-				return {success: true, result: "Success"}
-			else
-				return return_value
+			rescue => error
+				return error
 			end
 		end
 
@@ -208,7 +211,6 @@ class Endura::API < Grape::API
 
 		desc 'SHP'
 		get :shp do
-			p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishprun.p?string=#{params[:string]}&user=#{params[:user]}"
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishprun.p?string=#{params[:string]}&user=#{params[:user]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 			
