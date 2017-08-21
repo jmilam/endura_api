@@ -138,7 +138,7 @@ class Endura::API < Grape::API
 
 		desc 'TPT'
 		get :tpt do
-			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}&site=#{params[:site]}").get
+			response = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{params[:tag]}&Printer=#{params[:printer]}&user=#{params[:user_id]}&site=#{params[:site]}&type=tpt").get
 			return {success: true, result: "Label is reprinting..."}
 		end
 
@@ -155,10 +155,7 @@ class Endura::API < Grape::API
 				return_val = nil
 				params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
 					unless request_data[1].empty?
-						p "POR PO Num: #{params[:po_num]}"
 						1.upto(request_data[3].to_i) do
-							p "http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}"
-							
 							result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
 						  result = JSON.parse(result, :quirks_mode => true)
 						
@@ -170,8 +167,7 @@ class Endura::API < Grape::API
 							else
 								unless result["Tag"].empty?
 								 	1.upto(params[:label_count].to_i) do
-								 		p "Printing with a label_count of: #{params[:label_count]}, url: http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}"
-							   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}").get
+							   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}&type=por").get
 									end
 								end
 							end
