@@ -152,36 +152,49 @@ class Endura::API < Grape::API
 		get :por do
 			begin
 				params[:printer] = params[:dev].nil? ? params[:printer] : params[:dev]
+				data_string = ""
+				unique_key = "#{params[:user]}_#{params[:po_num]}_#{rand(0000..999999)}"
 				return_val = nil
+
 				params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
-					unless request_data[1].empty?
-						1.upto(request_data[3].to_i) do
-							result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-						  result = JSON.parse(result, :quirks_mode => true)
-						
-							error_count = result["Status"].match(/\d+/).nil? ? "0" : (result["Status"].match(/\d+/)[0]).to_i
-	
-						  if error_count > 0
-								return_val = {success: false, result: result["Error"]}
-								break
-							else
-								unless result["Tag"].empty?
-								 	1.upto(params[:label_count].to_i) do
-							   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}&type=por").get
-									end
-								end
-							end
-						end
-					end
-				end	
-	
+					data_string += "#{request_data[0]},#{request_data[1]},#{request_data[2]},#{request_data[3]},"
+				end
+
+				data_string = data_string.chomp(',')
+
+				result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipornew.p?key=#{unique_key}&dev=#{params[:printer]}&user=#{params[:user]}&po=#{params[:po_num]}&line=#{data_string}&site=#{params[:site]}").get
+				error_count = result["Status"].match(/\d+/).nil? ? 0 : (result["Status"].match(/\d+/)[0]).to_i
+
+			  if error_count > 0
+					return_val = {success: false, result: result["Error"]}
+				end
+
+				# params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
+				# 	unless request_data[1].empty?
+				# 		1.upto(request_data[3].to_i) do
+				# 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
+				# 		  result = JSON.parse(result, :quirks_mode => true)
+				# 		  if error_count > 0
+				# 				return_val = {success: false, result: result["Error"]}
+				# 				break
+				# 			else
+				# 				unless result["Tag"].empty?
+				# 				 	1.upto(params[:label_count].to_i) do
+				# 			   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}&type=por").get
+				# 					end
+				# 				end
+				# 			end
+				# 		end
+				# 	end
+				# end	
+
 				if return_val.nil?
-					return {success: true, result: "Success"}
+					return {success: true, result: "Success", unique_key: "#{unique_key}"}
 				else
 					return return_value
 				end
 			rescue => error
-				p "Error for #{params[:po_num]}: #{error}"
+				p error
 				return error
 			end
 		end
