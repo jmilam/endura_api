@@ -18,6 +18,6 @@ class MarketingMailer < ApplicationMailer
 		@order = order
 		@status = @order['accepted'] ? "Approved" : "Denied"
 
-		mail(from: "order_status@enduraproducts.com", to: to_email, cc: 'dsavage@enduraproducts.com' subject: "Order ##{@order['id']} was #{@status}")
+		mail(from: "order_status@enduraproducts.com", to: to_email, cc: 'dsavage@enduraproducts.com', subject: "Order ##{@order['id']} was #{@status}")
 	end
 end
