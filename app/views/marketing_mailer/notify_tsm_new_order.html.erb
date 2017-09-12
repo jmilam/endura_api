@@ -35,7 +35,7 @@
 			</tr>
 			<tr>
 				<td colspan=2><%= @order['payment_method'] %></td>
-				<td><%= link_to "Approve/Decline", "http://localhost:3001/order/#{@order['id']}" %></td>
+				<td><%= link_to "Approve/Decline", "#{@url}/order/#{@order['id']}" %></td>
 			</tr>
 		</tbody>
 	</table>
