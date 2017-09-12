@@ -495,6 +495,11 @@ class Endura::API < Grape::API
 		  		MarketingMailer.notify_rep_order_status(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order])).deliver
 		  	{success: true}
 		  end
+
+		  post :tsm_past_due_notification do
+		  	 MarketingMailer.notify_tsm_past_due_orders(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
+		  	{success: true}
+		  end
 		end
 
 		resource :reminder do

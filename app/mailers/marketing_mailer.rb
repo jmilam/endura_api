@@ -20,4 +20,16 @@ class MarketingMailer < ApplicationMailer
 
 		mail(from: "order_status@enduraproducts.com", to: to_email, cc: 'dsavage@enduraproducts.com', subject: "Order ##{@order['id']} was #{@status}")
 	end
+
+	def notify_tsm_past_due_orders(from_email, to_email, user, order, items)
+			@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
+			@from_email = from_email
+			@from_email << ", dsavage@enduraproducts.com"
+			@user = user
+			@items = items
+			@order = order
+			@sum = @items.inject(0) {|sum, item| sum += item['item_total']}
+			
+			mail(from: "past_due_orders@enduraproducts.com", to: to_email, cc: from_email, subject: "Please view past due order not accepted yet for #{user}")
+	end
 end
