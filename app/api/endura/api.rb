@@ -91,10 +91,10 @@ class Endura::API < Grape::API
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipmv.p?fref=#{params[:tag]}&tloc=#{params[:to_loc]}&user=#{params[:user_id]}&type=#{params[:type]}").get	
 			result = JSON.parse(result, :quirks_mode => true)
 			
-			if result["error"].match(/ERROR/)
-				return {success: false, result: result["error"]}
-			else
+			if result["success"]
 				return {success: true, result: "Success"}
+			else
+				return {success: false, result: result["error"]}
 			end
 		end
 
