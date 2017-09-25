@@ -41,4 +41,13 @@ class MarketingMailer < ApplicationMailer
 			mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Catalog Request form has been submitted.")
 		end
 	end
+
+	def new_image_request(image_request_ids)
+		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
+		image_request_ids.each do |id|
+			@id = id
+
+			mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Image Request has been submitted.")
+		end
+	end
 end
