@@ -486,18 +486,25 @@ class Endura::API < Grape::API
 		resource :marketing do
 			desc 'Send email to tsm w/ link to Approve/Reject Order'
 		  post :tsm_notification do
-		  	 MarketingMailer.notify_tsm_new_order(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
+		  	MarketingMailer.notify_tsm_new_order(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
 		  	{success: true}
 		  end
 
 		  desc 'Send email to rep w/ link to view accepted/rejected'
 		  post :rep_notification do
-		  		MarketingMailer.notify_rep_order_status(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order])).deliver
+		  	MarketingMailer.notify_rep_order_status(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order])).deliver
 		  	{success: true}
 		  end
 
+		  desc 'Send email for past due tsm approve/deny emails'
 		  post :tsm_past_due_notification do
-		  	 MarketingMailer.notify_tsm_past_due_orders(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
+		  	MarketingMailer.notify_tsm_past_due_orders(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
+		  	{success: true}
+		  end
+
+		  desc 'Send email for Catalog Request when order checked out'
+		  post :new_catalog_request do
+		  	MarketingMailer.new_catalog_request(JSON.parse(params[:request])).deliver
 		  	{success: true}
 		  end
 		end

@@ -32,4 +32,13 @@ class MarketingMailer < ApplicationMailer
 			
 			mail(from: "past_due_orders@enduraproducts.com", to: to_email, cc: from_email, subject: "Please view past due order not accepted yet for #{user}")
 	end
+
+	def new_catalog_request(catalog_request_ids)
+		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
+		catalog_request_ids.each do |id|
+			@id = id
+
+			mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Catalog Request form has been submitted.")
+		end
+	end
 end
