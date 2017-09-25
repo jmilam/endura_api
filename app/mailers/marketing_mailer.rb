@@ -42,12 +42,10 @@ class MarketingMailer < ApplicationMailer
 		end
 	end
 
-	def new_image_request(image_request_ids)
+	def new_image_request(order_id)
 		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
-		image_request_ids.each do |id|
-			@id = id
+		@order_id = order_id
 
-			mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Image Request has been submitted.")
-		end
+		mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Image Request has been submitted.")
 	end
 end
