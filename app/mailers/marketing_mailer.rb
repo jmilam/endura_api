@@ -38,7 +38,7 @@ class MarketingMailer < ApplicationMailer
 		catalog_request_ids.each do |id|
 			@id = id
 
-			mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Catalog Request form has been submitted.")
+			mail(from: "marketing_ecommerce@enduraproducts.com", to: "wrike+into178296025@wrike.com", cc: 'dsavage@enduraproducts.com' , subject: "A new Catalog Request form has been submitted.")
 		end
 	end
 
@@ -46,6 +46,6 @@ class MarketingMailer < ApplicationMailer
 		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
 		@order_id = order_id
 
-		mail(from: "marketing_ecommerce@enduraproducts.com", to: "jasonlmilam@gmail.com", subject: "A new Image Request has been submitted.")
+		mail(from: "marketing_ecommerce@enduraproducts.com", to: "wrike+into178296356@wrike.com", cc: 'dsavage@enduraproducts.com' , subject: "A new Image Request has been submitted.")
 	end
 end
