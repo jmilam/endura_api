@@ -510,7 +510,7 @@ class Endura::API < Grape::API
 
 		  desc 'Send email for Image Request when order checked out'
 		  post :new_image_request do
-		  	MarketingMailer.new_image_request(JSON.parse(params[:request])).deliver
+		  	MarketingMailer.new_image_request(params[:order_id])).deliver
 		  	{success: true}
 		  end
 		end
