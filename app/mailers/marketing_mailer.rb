@@ -2,7 +2,7 @@ class MarketingMailer < ApplicationMailer
 	def notify_tsm_new_order(from_email, to_email, user, order, items)
 			@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
 			@from_email = from_email
-			@from_email << ", dsavage@enduraproducts.com"
+			@from_email << ", marketing@enduraproducts.com, kcoltrane@enduraproducts.com"
 			@user = user
 			@items = items
 			@order = order
@@ -18,13 +18,13 @@ class MarketingMailer < ApplicationMailer
 		@order = order
 		@status = @order['accepted'] ? "Approved" : "Denied"
 
-		mail(from: "order_status@enduraproducts.com", to: to_email, cc: 'dsavage@enduraproducts.com', subject: "Order ##{@order['id']} was #{@status}")
+		mail(from: "order_status@enduraproducts.com", to: to_email, cc: 'marketing@enduraproducts.com, kcoltrane@enduraproducts.com', subject: "Order ##{@order['id']} was #{@status}")
 	end
 
 	def notify_tsm_past_due_orders(from_email, to_email, user, order, items)
 			@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing_test.enduraproducts.com"
 			@from_email = from_email
-			@from_email << ", dsavage@enduraproducts.com"
+			@from_email << ", marketing@enduraproducts.com, kcoltrane@enduraproducts.com"
 			@user = user
 			@items = items
 			@order = order
@@ -38,7 +38,7 @@ class MarketingMailer < ApplicationMailer
 		catalog_request_ids.each do |id|
 			@id = id
 
-			mail(from: "marketing_ecommerce@enduraproducts.com", to: "wrike+into178296025@wrike.com", cc: 'dsavage@enduraproducts.com' , subject: "A new Catalog Request form has been submitted.")
+			mail(from: "marketing_ecommerce@enduraproducts.com", to: "wrike+into178296025@wrike.com", cc: 'marketing@enduraproducts.com, kcoltrane@enduraproducts.com' , subject: "A new Catalog Request form has been submitted.")
 		end
 	end
 
