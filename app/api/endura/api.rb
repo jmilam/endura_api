@@ -161,32 +161,12 @@ class Endura::API < Grape::API
 				end
 
 				data_string = data_string.chomp(',')
-
 				result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipornew.p?key=#{unique_key}&dev=#{params[:printer]}&user=#{params[:user]}&po=#{params[:po_num]}&line=#{data_string}&site=#{params[:site]}").get
 				error_count = result["Status"].match(/\d+/).nil? ? 0 : (result["Status"].match(/\d+/)[0]).to_i
 
 			  if error_count > 0
 					return_val = {success: false, result: result["Error"]}
 				end
-
-				# params[:lines].zip(params[:qtys], params[:locations], params[:multipliers]).each do |request_data|
-				# 	unless request_data[1].empty?
-				# 		1.upto(request_data[3].to_i) do
-				# 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipor.p?dev=#{params[:printer]}&po=#{params[:po_num]}&line=#{request_data[0]}&qty=#{request_data[1]}&loc=#{request_data[2]}&howmany=#{params[:label_count]}&user=#{params[:user]}").get
-				# 		  result = JSON.parse(result, :quirks_mode => true)
-				# 		  if error_count > 0
-				# 				return_val = {success: false, result: result["Error"]}
-				# 				break
-				# 			else
-				# 				unless result["Tag"].empty?
-				# 				 	1.upto(params[:label_count].to_i) do
-				# 			   		HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxmbporprt.p?Tag=#{result['Tag']}&Printer=#{params[:printer]}&user=#{params[:user]}&site=#{params[:site]}&type=por").get
-				# 					end
-				# 				end
-				# 			end
-				# 		end
-				# 	end
-				# end	
 
 				if return_val.nil?
 					return {success: true, result: "Success", unique_key: "#{unique_key}"}
@@ -500,6 +480,11 @@ class Endura::API < Grape::API
 		  post :tsm_past_due_notification do
 		  	MarketingMailer.notify_tsm_past_due_orders(params[:from_email], params[:to_email], params[:user], JSON.parse(params[:order]), JSON.parse(params[:items])).deliver
 		  	{success: true}
+		  end
+
+		  desc 'Send email nightly for daily order overview'
+		  post :daily_order_overview do
+		  	MarketingMailer.daily_order_overview(JSON.parse(params[:orders])).deliver
 		  end
 
 		  desc 'Send email for Catalog Request when order checked out'
