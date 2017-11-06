@@ -34,7 +34,7 @@ class MarketingMailer < ApplicationMailer
 	def daily_order_overview(orders, customers)
 		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing-test.enduraproducts.com"
 		@orders = orders
-		p @customers = customers
+		@customers = customers
 		
 		mail(from: "daily_order_overview@enduraproducts.com", to: 'jasonlmilam@gmail.com', subject: "Daily Order Overview for #{Date.today}")
 	end

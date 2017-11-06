@@ -1,5 +1,8 @@
 <% @orders.each do |order| %>
 	<%= order %>
+	<% p order['customer_id'].to_s %>
+	<% p @customers[order['customer_id'].to_s] %>
+	<%= @customer = @customers[order['customer_id'].to_s] %>
 	<table style="width:100%;">
 		<tbody>
 			<tr>
@@ -32,6 +35,12 @@
 
 					<p>
 						<b>Company:</b>
+					</p>
+					<p>
+						<%= @customer['company_name'] %><br/>
+						<%= @customer['contact_email'] %><br/>
+						<%= @customer['phone_number'] %>
+
 					</p>
 
 					<br/>
