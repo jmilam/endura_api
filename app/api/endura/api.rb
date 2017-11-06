@@ -484,7 +484,7 @@ class Endura::API < Grape::API
 
 		  desc 'Send email nightly for daily order overview'
 		  post :daily_order_overview do
-		  	MarketingMailer.daily_order_overview(JSON.parse(params[:orders])).deliver
+		  	MarketingMailer.daily_order_overview(JSON.parse(params[:orders]), JSON.parse(params[:customers])).deliver
 		  end
 
 		  desc 'Send email for Catalog Request when order checked out'
