@@ -4,19 +4,19 @@
 	<table style="width:100%;">
 		<tbody>
 			<tr>
-				<td colspan=4 style="text-align:center;background-color:red;height:75px;">Order <%= order['id'] %></td>
+				<td colspan=6 style="text-align:center;background-color:red;height:75px;">Order <%= order['id'] %></td>
 			</tr>
 			<tr>
-				<td colspan=2 style="border: 1px solid black;">
+				<td colspan=3 style="border: 1px solid black;">
 					<p>
-						<b>Order Date:</b> <%= order['created_at'] %><br/>
+						<b>Order Date:</b> <%= order['created_at'].strftime('%Y-%m-%d') %><br/>
 						<b>Deadline Date:</b> <%= order['deadline'] %><br/>
 						<b>Approved Date:</b> <%= order['accepted_date'] %><br/>
 						<b>Requested By: </b><br/>
 						<b>Payment Method:</b> <%= order['payment_method'] %></b>
 					</p>
 				</td>
-				<td colspan=2 style="border: 1px solid black;">
+				<td colspan=3 style="border: 1px solid black;">
 					<p>
 						<b>Ship To:</b>
 					</p>
