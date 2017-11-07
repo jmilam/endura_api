@@ -31,11 +31,12 @@ class MarketingMailer < ApplicationMailer
 			mail(from: "past_due_orders@enduraproducts.com", to: to_email, cc: from_email, subject: "Please view past due order not accepted yet for #{user}")
 	end
 
-	def daily_order_overview(orders, customers, order_items)
+	def daily_order_overview(orders, customers, order_items, item_references)
 		@url = Rails.env == "production" ? "http://marketing.enduraproducts.com" : "http://marketing-test.enduraproducts.com"
 		@orders = orders
 		@customers = customers
 		@order_items = order_items
+		@item_references = item_references
 		
 		mail(from: "daily_order_overview@enduraproducts.com", to: 'jasonlmilam@gmail.com', subject: "Daily Order Overview for #{Date.today}")
 	end

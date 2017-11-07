@@ -1,11 +1,10 @@
-<%= @order_items %>
 <% @orders.each do |order| %>
-	<%= @customer = @customers[order['customer_id'].to_s] %>
+	<% @customer = @customers[order['customer_id'].to_s] %>
 
 	<table style="width:100%;">
 		<tbody>
 			<tr>
-				<td colspan=4 style="text-align:center;background-color:red;">Order <%= order['id'] %></td>
+				<td colspan=4 style="text-align:center;background-color:red;height:75px;">Order <%= order['id'] %></td>
 			</tr>
 			<tr>
 				<td colspan=2>
@@ -49,6 +48,26 @@
 					</p>
 				</td>
 			</tr>
+
+			<tr>
+				<th>Line #</th>
+				<th>Item Number</th>
+				<th>Item Description</th>
+				<th>Qty Ordered</th>
+				<th>Price</th>
+				<th>Notes</th>
+			</tr>
+
+			<% @order_items.each_with_index do |item, index| %>
+				<tr>
+					<td><%= index + 1 %></td>
+					<td></td>
+					<td><%= @item_references[item['reference_id'].to_s] %></td>
+					<td><%= item['quantity'] %></td>
+					<td><%= number_to_currency(item['item_total']) %></td>
+					<td><%= item['note'] %></td>
+				</tr>
+			<% end %>
 		</tbody>
 	</table>
 <% end %>
