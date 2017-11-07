@@ -9,7 +9,7 @@
 			<tr>
 				<td colspan=3 style="border: 1px solid black;">
 					<p>
-						<b>Order Date:</b> <%= order['created_at'].strftime('%Y-%m-%d') %><br/>
+						<b>Order Date:</b> <%= order['created_at'].to_date.strftime('%Y-%m-%d') %><br/>
 						<b>Deadline Date:</b> <%= order['deadline'] %><br/>
 						<b>Approved Date:</b> <%= order['accepted_date'] %><br/>
 						<b>Requested By: </b><br/>
