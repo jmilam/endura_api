@@ -7,7 +7,7 @@
 				<td colspan=4 style="text-align:center;background-color:red;height:75px;">Order <%= order['id'] %></td>
 			</tr>
 			<tr>
-				<td colspan=2>
+				<td colspan=2 style="border: 1px solid black;">
 					<p>
 						<b>Order Date:</b> <%= order['created_at'] %><br/>
 						<b>Deadline Date:</b> <%= order['deadline'] %><br/>
@@ -16,7 +16,7 @@
 						<b>Payment Method:</b> <%= order['payment_method'] %></b>
 					</p>
 				</td>
-				<td colspan=2>
+				<td colspan=2 style="border: 1px solid black;">
 					<p>
 						<b>Ship To:</b>
 					</p>
@@ -50,22 +50,22 @@
 			</tr>
 
 			<tr>
-				<th>Line #</th>
-				<th>Item Number</th>
-				<th>Item Description</th>
-				<th>Qty Ordered</th>
-				<th>Price</th>
-				<th>Notes</th>
+				<th style="text-align: center;border: 1px solid black;">Line #</th>
+				<th style="text-align: center;border: 1px solid black;">Item Number</th>
+				<th style="text-align: center;border: 1px solid black;">Item Description</th>
+				<th style="text-align: center;border: 1px solid black;">Qty Ordered</th>
+				<th style="text-align: center;border: 1px solid black;">Price</th>
+				<th style="text-align: center;border: 1px solid black;">Notes</th>
 			</tr>
 
 			<% @order_items.each_with_index do |item, index| %>
 				<tr>
-					<td><%= index + 1 %></td>
-					<td></td>
-					<td><%= @item_references[item['reference_id'].to_s] %></td>
-					<td><%= item['quantity'] %></td>
-					<td><%= number_to_currency(item['item_total']) %></td>
-					<td><%= item['note'] %></td>
+					<td style="text-align: center;border: 1px solid black;"><%= index + 1 %></td>
+					<td style="text-align: center;border: 1px solid black;"></td>
+					<td style="text-align: center;border: 1px solid black;"><%= @item_references[item['reference_id'].to_s] %></td>
+					<td style="text-align: center;border: 1px solid black;"><%= item['quantity'] %></td>
+					<td style="text-align: center;border: 1px solid black;"><%= number_to_currency(item['item_total']) %></td>
+					<td style="text-align: center;border: 1px solid black;"><%= item['note'] %></td>
 				</tr>
 			<% end %>
 		</tbody>
