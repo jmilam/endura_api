@@ -7,7 +7,7 @@
 				<td colspan=6 style="text-align:center;background-color:red;height:75px;">Order <%= order['id'] %></td>
 			</tr>
 			<tr>
-				<td colspan=3 style="border: 1px solid black;">
+				<td colspan=3 style="border: 1px solid black;padding-left:20px;">
 					<p>
 						<b>Order Date:</b> <%= order['created_at'].to_date.strftime('%Y-%m-%d') %><br/>
 						<b>Deadline Date:</b> <%= order['deadline'] %><br/>
@@ -16,34 +16,19 @@
 						<b>Payment Method:</b> <%= order['payment_method'] %></b>
 					</p>
 				</td>
-				<td colspan=3 style="border: 1px solid black;">
+				<td colspan=3 style="border: 1px solid black;padding-left: 20px;">
 					<p>
-						<b>Ship To:</b>
-					</p>
-
-					<br/>
-
-					<p>
+						<b>Ship To:</b><br/>
 						<%= order['order_receipient'] %><br/>
 						<%= order['address'] %><br/>
 						<%= order['city'] %>, <%= order['state'] %> <%= order['zipcode'] %>
-					</p>
 
-					<br/>
+						<br/>
 
-					<p>
-						<b>Company:</b>
-					</p>
-					<p>
+						<b>Company:</b><br/>
 						<%= @customer['company_name'] %><br/>
 						<%= @customer['contact_email'] %><br/>
 						<%= @customer['phone_number'] %>
-
-					</p>
-
-					<br/>
-
-					<p>
 
 					</p>
 				</td>
