@@ -1,8 +1,7 @@
+<%= @order_items %>
 <% @orders.each do |order| %>
-	<%= order %>
-	<% p order['customer_id'].to_s %>
-	<% p @customers[order['customer_id'].to_s] %>
 	<%= @customer = @customers[order['customer_id'].to_s] %>
+
 	<table style="width:100%;">
 		<tbody>
 			<tr>
@@ -11,11 +10,11 @@
 			<tr>
 				<td colspan=2>
 					<p>
-						<b>Order Date: <%= order['created_at'] %></b><br/>
-						<b>Deadline Date: <%= order['deadline'] %></b><br/>
-						<b>Approved Date: <%= order['accepted_date'] %></b><br/>
+						<b>Order Date:</b> <%= order['created_at'] %><br/>
+						<b>Deadline Date:</b> <%= order['deadline'] %><br/>
+						<b>Approved Date:</b> <%= order['accepted_date'] %><br/>
 						<b>Requested By: </b><br/>
-						<b>Payment Method: <%= order['payment_method'] %></b>
+						<b>Payment Method:</b> <%= order['payment_method'] %></b>
 					</p>
 				</td>
 				<td colspan=2>
@@ -53,5 +52,3 @@
 		</tbody>
 	</table>
 <% end %>
-
-<%= @customers %>
