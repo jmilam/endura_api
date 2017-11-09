@@ -38,7 +38,7 @@ class MarketingMailer < ApplicationMailer
 		@order_items = order_items
 		@item_references = item_references
 		
-		mail(from: "order_overview@enduraproducts.com", to: 'marketing@enduraproducts.com, kcoltrane@enduraproducts.com' , cc: 'jasonlmilam@gmail.com', subject: "Daily Order Overview for #{Date.today}")
+		mail(from: "order_overview@enduraproducts.com", to: 'marketing@enduraproducts.com, kcoltrane@enduraproducts.com' , cc: 'jasonlmilam@gmail.com', subject: "Order Overview Report")
 	end
 
 	def new_catalog_request(catalog_request_ids)
