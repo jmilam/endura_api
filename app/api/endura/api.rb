@@ -226,7 +226,7 @@ class Endura::API < Grape::API
 		desc 'Get Shipping Lines'
 		get :ship_lines do
 			#Original JSON API URL
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}&site=#{params[:site]}").get
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines1.p?so=#{params[:so_number]}&user=#{params[:user]}&line=#{params[:line_number]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 
