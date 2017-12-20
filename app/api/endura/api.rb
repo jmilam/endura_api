@@ -64,10 +64,10 @@ class Endura::API < Grape::API
 		desc 'PDL'
 		get :pdl do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapipul.p?item=#{params[:item_num]}&qty=#{params[:qty_to_move]}&floc=#{params[:from_loc]}&fref=#{params[:tag]}&tloc=#{params[:to_loc]}&fsite=#{params[:to_site]}&tsite=#{params[:from_site]}&user=#{params[:user_id]}&type=#{params[:type]}").get
-			result = JSON.parse(result, :quirks_mode => true)
+			result = JSON.parse result, :quirks_mode => true
 			
-			if result["error"].match(/ERROR/)
-				return {success: false, result: result["error"]}
+			if !result["success"]
+				return {success: false, result: result["status"]}
 			else
 				return {success: true, result: "Success"}
 			end
@@ -226,7 +226,7 @@ class Endura::API < Grape::API
 		desc 'Get Shipping Lines'
 		get :ship_lines do
 			#Original JSON API URL
-			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}").get
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines.p?so=#{params[:so_number]}&user=#{params[:user]}&site=#{params[:site]}").get
 			# result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapishplines1.p?so=#{params[:so_number]}&user=#{params[:user]}&line=#{params[:line_number]}").get
 			result = JSON.parse(result, :quirks_mode => true)
 

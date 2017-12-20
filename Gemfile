@@ -42,6 +42,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.5'
   gem 'rails-controller-testing'
   gem 'factory_girl_rails'
+  gem 'simplecov', :require => false
 end
 
 group :development do
@@ -66,5 +67,6 @@ gem 'passenger'
 gem 'devise'
 gem 'rack-cors'
 gem 'spreadsheet'
+gem 'rubocop'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
