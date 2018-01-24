@@ -86,7 +86,7 @@ class Endura::API < Grape::API
 					f.write(params[:bol_signature][:tempfile].read)
 				end
 
-				File.open('media/bol/carrier_signature.png', 'wb') do |f|
+				File.open('/media/bol/carrier_signature.png', 'wb') do |f|
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
@@ -95,7 +95,7 @@ class Endura::API < Grape::API
 					Find.find('/media/bol/shipper_signature.png') do |img_file|
 						image img_file, :at => [0,75], :width => 250 
 					end
-					Find.find('media/bol/carrier_signature.png') do |img_file|
+					Find.find('/media/bol/carrier_signature.png') do |img_file|
 						image img_file, :at => [230,75], :width => 250 
 					end
 				end
