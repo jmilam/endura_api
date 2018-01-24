@@ -100,11 +100,11 @@ class Endura::API < Grape::API
 					end
 				end
 
-				signature = CombinePDF.load("/media/bol/watermarked.pdf")).pages[0]
+				signature = CombinePDF.load("/media/bol/watermarked.pdf").pages[0]
 				my_prawn_pdf = CombinePDF.new
 				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
-				my_prawn_pdf.save "combined.pdf"
+				my_prawn_pdf.save "/media/bol/combined.pdf"
 
 				{success: true}
 			rescue StandardError => error
