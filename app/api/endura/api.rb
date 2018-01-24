@@ -82,25 +82,25 @@ class Endura::API < Grape::API
 		desc 'This saves signature and creates new pdf and stores'
 		post :save_signature do
 			begin
-				File.open('/media/bol/shipper_signature.png', 'wb') do |f|
+				File.open("/media/bol/signatures/#{params[:pdf_file_name]}_shipper_signature.png", 'wb') do |f|
 					f.write(params[:bol_signature][:tempfile].read)
 				end
 
-				File.open('/media/bol/carrier_signature.png', 'wb') do |f|
+				File.open("/media/bol/signatures/#{params[:pdf_file_name]}_carrier_signature.png", 'wb') do |f|
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
-				Prawn::Document.generate("/media/bol/signature.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
+				Prawn::Document.generate("/media/bol/signature/#{params[:pdf_file_name]}_signature.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
-					Find.find('/media/bol/shipper_signature.png') do |img_file|
+					Find.find("/media/bol/signatures/#{params[:pdf_file_name]}_shipper_signature.png") do |img_file|
 						image img_file, :at => [0,75], :width => 250 
 					end
-					Find.find('/media/bol/carrier_signature.png') do |img_file|
+					Find.find("/media/bol/signatures/#{params[:pdf_file_name]}_carrier_signature.png") do |img_file|
 						image img_file, :at => [230,75], :width => 250 
 					end
 				end
 
-				signature = CombinePDF.load("/media/bol/signature.pdf").pages[0]
+				signature = CombinePDF.load("/media/bol/siganture/#{params[:pdf_file_name]}_signature.pdf").pages[0]
 				my_prawn_pdf = CombinePDF.new
 				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
