@@ -90,7 +90,7 @@ class Endura::API < Grape::API
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
-				Prawn::Document.generate("watermarked.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
+				Prawn::Document.generate("/media/bol/watermarked.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
 					Find.find('/media/bol/shipper_signature.png') do |img_file|
 						image img_file, :at => [0,75], :width => 250 
@@ -100,7 +100,7 @@ class Endura::API < Grape::API
 					end
 				end
 
-				signature = CombinePDF.load(Rails.root.join("watermarked.pdf")).pages[0]
+				signature = CombinePDF.load("/media/bol/watermarked.pdf")).pages[0]
 				my_prawn_pdf = CombinePDF.new
 				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
