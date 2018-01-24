@@ -61,7 +61,7 @@ class Endura::API < Grape::API
 			files = []
 			file_images = []
 
-			Find.find('lib/bol/') do |path|
+			Find.find('/media/bol/') do |path|
 				next if File.basename(path) == 'bol'
 				next if path.match(params[:search_criteria]).nil?
 
@@ -74,7 +74,7 @@ class Endura::API < Grape::API
 
 		desc 'Pull Image'
 		get :pull_file do
-	    data = File.binread("lib/bol/#{params[:file_name]}")
+	    data = File.binread("/media/bol/#{params[:file_name]}")
 	    content_type 'application/octet-stream'
 	    body data
 	  end
@@ -90,7 +90,7 @@ class Endura::API < Grape::API
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
-				Prawn::Document.generate("watermarked.pdf", :page_size => "A4", :template => "lib/bol/#{params[:pdf_file_name]}") do
+				Prawn::Document.generate("watermarked.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
 					Find.find('shipper_signature.png') do |img_file|
 						image img_file, :at => [0,75], :width => 250 
@@ -100,9 +100,9 @@ class Endura::API < Grape::API
 					end
 				end
 
-				signature =  CombinePDF.load(Rails.root.join("watermarked.pdf")).pages[0]
+				signature = CombinePDF.load(Rails.root.join("watermarked.pdf")).pages[0]
 				my_prawn_pdf = CombinePDF.new
-				my_prawn_pdf << CombinePDF.load("lib/bol/#{params[:pdf_file_name]}")
+				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
 				my_prawn_pdf.save "combined.pdf"
 
