@@ -82,20 +82,20 @@ class Endura::API < Grape::API
 		desc 'This saves signature and creates new pdf and stores'
 		post :save_signature do
 			begin
-				File.open('shipper_signature.png', 'wb') do |f|
+				File.open('/media/bol/shipper_signature.png', 'wb') do |f|
 					f.write(params[:bol_signature][:tempfile].read)
 				end
 
-				File.open('carrier_signature.png', 'wb') do |f|
+				File.open('media/bol/carrier_signature.png', 'wb') do |f|
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
 				Prawn::Document.generate("watermarked.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
-					Find.find('shipper_signature.png') do |img_file|
+					Find.find('/media/bol/shipper_signature.png') do |img_file|
 						image img_file, :at => [0,75], :width => 250 
 					end
-					Find.find('carrier_signature.png') do |img_file|
+					Find.find('media/bol/carrier_signature.png') do |img_file|
 						image img_file, :at => [230,75], :width => 250 
 					end
 				end
