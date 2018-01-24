@@ -62,7 +62,7 @@ class Endura::API < Grape::API
 			file_images = []
 
 			Find.find('/media/bol/') do |path|
-				next if !File.basename(path).match(/[a-z][1-9]+/).nil?
+				next if File.basename(path)[0].match(/\d/).nil?
 				next if path.match(params[:search_criteria]).nil?
 
 				files << File.basename(path) 
