@@ -1,34 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/Users/jmilam/Desktop/rails/endura_api/app/models/concerns/http_request.rb": [
-        1,
-        1,
-        14,
-        null,
-        null,
-        1,
-        14,
-        null,
-        null
-      ],
-      "/Users/jmilam/Desktop/rails/endura_api/app/mailers/oe_mailer.rb": [
-        1,
-        1,
-        0,
-        0,
-        null,
-        0,
-        null,
-        null
-      ],
-      "/Users/jmilam/Desktop/rails/endura_api/app/mailers/application_mailer.rb": [
-        1,
-        1,
-        1,
-        null
-      ]
     },
-    "timestamp": 1510256184
+    "timestamp": 1516799253
   }
 }

@@ -1,5 +1,6 @@
 class Endura::API < Grape::API
 	require 'net/http'
+	require 'find'
 	before do
 		if Rails.env == "test"
 			@qadenv = "qadnix"
@@ -49,6 +50,66 @@ class Endura::API < Grape::API
 			result = JSON.parse(result, :quirks_mode => true)
 
 			return result
+		end
+	end
+
+	resource :bol do
+		format :json
+
+		desc 'This searches all availabled BOL files and returns a list of file names'
+		get :search do
+			files = []
+			file_images = []
+
+			Find.find('lib/bol/') do |path|
+				next if File.basename(path) == 'bol'
+				next if path.match(params[:search_criteria]).nil?
+
+				files << File.basename(path) 
+				file_images << Base64.encode64(File.binread(path))
+			end
+
+			{files_found: files, file_images: file_images}
+		end
+
+		desc 'Pull Image'
+		get :pull_file do
+	    data = File.binread("lib/bol/#{params[:file_name]}")
+	    content_type 'application/octet-stream'
+	    body data
+	  end
+
+		desc 'This saves signature and creates new pdf and stores'
+		post :save_signature do
+			begin
+				File.open('shipper_signature.png', 'wb') do |f|
+					f.write(params[:bol_signature][:tempfile].read)
+				end
+
+				File.open('carrier_signature.png', 'wb') do |f|
+					f.write(params[:carrier_signature][:tempfile].read)
+				end
+
+				Prawn::Document.generate("watermarked.pdf", :page_size => "A4", :template => "lib/bol/#{params[:pdf_file_name]}") do
+
+					Find.find('shipper_signature.png') do |img_file|
+						image img_file, :at => [0,75], :width => 250 
+					end
+					Find.find('carrier_signature.png') do |img_file|
+						image img_file, :at => [230,75], :width => 250 
+					end
+				end
+
+				signature =  CombinePDF.load(Rails.root.join("watermarked.pdf")).pages[0]
+				my_prawn_pdf = CombinePDF.new
+				my_prawn_pdf << CombinePDF.load("lib/bol/#{params[:pdf_file_name]}")
+				my_prawn_pdf.pages.each { |page| page << signature}
+				my_prawn_pdf.save "combined.pdf"
+
+				{success: true}
+			rescue StandardError => error
+				{success: false, message: error}
+			end
 		end
 	end
 
@@ -402,7 +463,6 @@ class Endura::API < Grape::API
 			result
 		end
 	end
-
 
 	resource :email do
 		format :json
