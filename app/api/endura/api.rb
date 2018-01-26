@@ -60,7 +60,7 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			Find.find('media/bol/') do |path|
+			Find.find('/media/bol/') do |path|
 				next if File.basename(path)[0].match(/\d/).nil?
 				next if !File.basename(path).match("signed").nil? || !File.basename(path).match("signature").nil?
 				next if path.match(params[:search_criteria]).nil?
@@ -79,7 +79,7 @@ class Endura::API < Grape::API
 			content_type "application/pdf"
 			header 'Content-Disposition', "attachment; filename*=UTF-8''#{params[:file_name]}"
 
-			Find.find("media/bol/#{params[:file_name]}") do |path|
+			Find.find("/media/bol/#{params[:file_name]}") do |path|
 				file = File.binread(path)
 			end
 			file
