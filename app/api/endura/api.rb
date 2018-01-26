@@ -72,13 +72,6 @@ class Endura::API < Grape::API
 			{files_found: files, file_images: file_images}
 		end
 
-		desc 'Pull Image'
-		get :pull_file do
-	    data = File.binread("/media/bol/#{params[:file_name]}")
-	    content_type 'application/octet-stream'
-	    body data
-	  end
-
 		desc 'This saves signature and creates new pdf and stores'
 		post :save_signature do
 			begin
@@ -108,6 +101,7 @@ class Endura::API < Grape::API
 
 				{success: true}
 			rescue StandardError => error
+				p error
 				{success: false, message: error}
 			end
 		end
