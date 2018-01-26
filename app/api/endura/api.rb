@@ -75,20 +75,21 @@ class Endura::API < Grape::API
 		desc 'This saves signature and creates new pdf and stores'
 		post :save_signature do
 			begin
-				File.open("/media/bol/signatures/#{params[:pdf_file_name]}_shipper_signature.png", 'wb') do |f|
+				shipper_signature, carrier_signature = "#{params[:pdf_file_name]}_shipper_signature.png", "#{params[:pdf_file_name]}_carrier_signature.png"
+				File.open("/media/bol/signatures/#{shipper_signature}", 'wb') do |f|
 					f.write(params[:bol_signature][:tempfile].read)
 				end
 
-				File.open("/media/bol/signatures/#{params[:pdf_file_name]}_carrier_signature.png", 'wb') do |f|
+				File.open("/media/bol/signatures/#{carrier_signature}", 'wb') do |f|
 					f.write(params[:carrier_signature][:tempfile].read)
 				end
 
 				Prawn::Document.generate("/media/bol/signatures/#{params[:pdf_file_name]}_signature.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
-					Find.find("/media/bol/signatures/#{params[:pdf_file_name]}_shipper_signature.png") do |img_file|
+					Find.find("/media/bol/signatures/#{shipper_signature}") do |img_file|
 						image img_file, :at => [0,75], :width => 250 
 					end
-					Find.find("/media/bol/signatures/#{params[:pdf_file_name]}_carrier_signature.png") do |img_file|
+					Find.find("/media/bol/signatures/#{carrier_signature}") do |img_file|
 						image img_file, :at => [230,75], :width => 250 
 					end
 				end
@@ -101,7 +102,6 @@ class Endura::API < Grape::API
 
 				{success: true}
 			rescue StandardError => error
-				p error
 				{success: false, message: error}
 			end
 		end
