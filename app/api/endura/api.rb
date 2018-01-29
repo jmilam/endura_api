@@ -58,16 +58,13 @@ class Endura::API < Grape::API
 
 		desc 'This searches all availabled BOL files and returns a list of file names'
 		get :search do
-			p "Params are: #{params}"
 			files = []
 			file_images = []
 			Find.find('/media/bol/') do |path|
 				next if File.basename(path)[0].match(/\d/).nil?
 				next if !File.basename(path).match("signature").nil?
 				next if path.match(params[:search_criteria]).nil?
-				if params[:show_signed] == 1 || params[:show_signed]
-					p "SHOULD SHOW SIGNED"
-				else
+				unless params[:show_signed] == "1" || params[:show_signed]
 					next if !File.basename(path).match("signed").nil?
 				end
 
