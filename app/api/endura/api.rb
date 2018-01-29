@@ -63,8 +63,10 @@ class Endura::API < Grape::API
 			Find.find('/media/bol/') do |path|
 				next if File.basename(path)[0].match(/\d/).nil?
 				next if !File.basename(path).match("signature").nil?
-				next if !File.basename(path).match("signed").nil? unless params[:show_signed]
 				next if path.match(params[:search_criteria]).nil?
+				unless params[:show_signed]
+					next if !File.basename(path).match("signed").nil?
+				end
 
 				files << File.basename(path) 
 				file_images << Base64.encode64(File.binread(path))
