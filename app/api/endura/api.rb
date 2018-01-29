@@ -64,7 +64,8 @@ class Endura::API < Grape::API
 				next if File.basename(path)[0].match(/\d/).nil?
 				next if !File.basename(path).match("signature").nil?
 				next if path.match(params[:search_criteria]).nil?
-				unless params[:show_signed] == "1" || params[:show_signed]
+				if params[:show_signed] == "1"
+				else
 					next if !File.basename(path).match("signed").nil?
 				end
 
