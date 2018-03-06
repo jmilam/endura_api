@@ -15,7 +15,23 @@ class Endura::API < Grape::API
 			@time_off_url = "http://request_off.enduraproducts.com"
 		end
 	end
-	
+
+	helpers do
+		def parse_date(date)
+			case date.downcase
+
+			when "" || "today"
+				Date.today.strftime("%m%d%y")
+			else
+				Date.today.strftime("%m%d%y")
+			end
+		end
+
+		def validate_file_exists(file, carrier, parse_date)
+			file.downcase.include?(carrier.downcase) && file.include?(parse_date)
+		end
+	end
+
 	resource do
 		format :json
 
@@ -60,18 +76,33 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
+			# Find.find('lib/bol/') do |path|				
 			Find.find('/media/bol/') do |path|
-				next if File.basename(path)[0].match(/\d/).nil?
+				next if File.basename(path).match(/^(\w+)-(\d+)-(\d+)-(\d+)?/).nil?
 				next if !File.basename(path).match("signature").nil?
-				next if path.match(params[:search_criteria]).nil?
+
 				if params[:show_signed] == "1"
 				else
 					next if !File.basename(path).match("signed").nil?
 				end
 
+				next if !validate_file_exists(path, params[:carrier], parse_date(params[:date_range]))
+
 				files << File.basename(path) 
 				file_images << Base64.encode64(File.binread(path))
 			end
+			# Find.find('/media/bol/') do |path|
+			# 	next if File.basename(path)[0].match(/\d/).nil?
+			# 	next if !File.basename(path).match("signature").nil?
+			# 	next if path.match(params[:search_criteria]).nil?
+			# 	if params[:show_signed] == "1"
+			# 	else
+			# 		next if !File.basename(path).match("signed").nil?
+			# 	end
+
+			# 	files << File.basename(path) 
+			# 	file_images << Base64.encode64(File.binread(path))
+			# end
 
 			{files_found: files, file_images: file_images}
 		end
