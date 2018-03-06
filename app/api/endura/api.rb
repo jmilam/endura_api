@@ -23,12 +23,16 @@ class Endura::API < Grape::API
 			when "" || "today"
 				Date.today.strftime("%m%d%y")
 			else
-				Date.today.strftime("%m%d%y")
+				"all"
 			end
 		end
 
 		def validate_file_exists(file, carrier, parse_date)
-			file.downcase.include?(carrier.downcase) && file.include?(parse_date)
+			if parse_date == "all"
+				file.downcase.include?(carrier.downcase)
+			else
+				file.downcase.include?(carrier.downcase) && file.include?(parse_date)
+			end
 		end
 	end
 
