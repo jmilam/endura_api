@@ -80,7 +80,7 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			# Find.find('lib/bol/') do |path|				
+			# Find.find('lib/bol/') do |path|		
 			Find.find('/media/bol/') do |path|
 				next if File.basename(path).match(/^(\w+)-(\d+)-(\d+)-(\d+)?/).nil?
 				next if !File.basename(path).match("signature").nil?
@@ -92,7 +92,7 @@ class Endura::API < Grape::API
 
 				next if !validate_file_exists(path, params[:carrier], parse_date(params[:date_range]))
 
-				if params[:specific_file]
+				if params[:specific_file] != 0
 					next if File.basename(path).match(params[:search_criteria]).nil?
 				end
 
