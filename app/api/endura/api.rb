@@ -21,7 +21,11 @@ class Endura::API < Grape::API
 			case date.downcase
 
 			when "" || "today"
-				Date.today.strftime("%m%d%y")
+				[Date.today]
+			when "one week"
+				((Date.today - 1.week)..Date.today)
+			when "3 months"
+				((Date.today - 3.months)..Date.today)
 			else
 				"all"
 			end
@@ -31,7 +35,12 @@ class Endura::API < Grape::API
 			if parse_date == "all"
 				file.downcase.include?(carrier.downcase)
 			else
-				file.downcase.include?(carrier.downcase) && file.include?(parse_date)
+				date = File.basename(file).scan(/\w+/)[3]
+				month = date[0..1].to_i
+				day = date[2..3].to_i
+				year = "20#{date[4..5]}".to_i
+
+				file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
 			end
 		end
 	end
