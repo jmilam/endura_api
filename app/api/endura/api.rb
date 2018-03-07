@@ -95,20 +95,22 @@ class Endura::API < Grape::API
 				files << File.basename(path) 
 				file_images << Base64.encode64(File.binread(path))
 			end
-			# Find.find('/media/bol/') do |path|
-			# 	next if File.basename(path)[0].match(/\d/).nil?
-			# 	next if !File.basename(path).match("signature").nil?
-			# 	next if path.match(params[:search_criteria]).nil?
-			# 	if params[:show_signed] == "1"
-			# 	else
-			# 		next if !File.basename(path).match("signed").nil?
-			# 	end
-
-			# 	files << File.basename(path) 
-			# 	file_images << Base64.encode64(File.binread(path))
-			# end
 
 			{files_found: files, file_images: file_images}
+		end
+
+		desc 'Pull images back for carriers'
+		get :carrier_images do
+			file_images = []
+			file_names = []
+			# Find.find('lib/bol/images/') do |path|
+			Find.find('media/bol/images/') do |path|
+				next if File.basename(path).include?('images')
+				file_images << Base64.encode64(File.binread(path))
+				file_names << File.basename(path).match(/\w+/)[0]
+			end
+
+			{file_images: file_images, file_names: file_names}
 		end
 
 		desc 'This gets file bytes in order to build PDF on front end.'
