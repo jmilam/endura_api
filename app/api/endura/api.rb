@@ -92,6 +92,10 @@ class Endura::API < Grape::API
 
 				next if !validate_file_exists(path, params[:carrier], parse_date(params[:date_range]))
 
+				if params[:specific_file]
+					next if File.basename(path).match(params[:search_criteria]).nil?
+				end
+
 				files << File.basename(path) 
 				file_images << Base64.encode64(File.binread(path))
 			end
