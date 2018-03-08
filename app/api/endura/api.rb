@@ -52,11 +52,16 @@ class Endura::API < Grape::API
 				end
 			else
 				date = File.basename(file).scan(/\w+/)[3]
-				month = date[0..1].to_i
-				day = date[2..3].to_i
-				year = "20#{date[4..5]}".to_i
 
-				file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+				if date.nil? || date.length > 6
+					false
+				else
+					month = date[0..1].to_i
+					day = date[2..3].to_i
+					year = "20#{date[4..5]}".to_i
+
+					file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+				end
 			end
 		end
 	end
