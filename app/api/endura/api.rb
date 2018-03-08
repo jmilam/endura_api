@@ -40,11 +40,12 @@ class Endura::API < Grape::API
 				end
 			elsif carrier.downcase == "all carriers"
 				date = File.basename(file).scan(/\w+/)[3]
-				return false if date.nil?
+
 				month = date[0..1].to_i
 				day = date[2..3].to_i
 				year = "20#{date[4..5]}".to_i
 
+				puts "Date is #{date}"
 				parse_date.include?(Date.new(year,month,day))
 			else
 				date = File.basename(file).scan(/\w+/)[3]
