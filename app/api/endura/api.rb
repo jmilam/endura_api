@@ -33,7 +33,18 @@ class Endura::API < Grape::API
 
 		def validate_file_exists(file, carrier, parse_date)
 			if parse_date == "all"
-				file.downcase.include?(carrier.downcase)
+				if carrier.downcase == "all carriers"
+					true
+				else
+					file.downcase.include?(carrier.downcase)
+				end
+			elsif carrier.downcase == "all carriers"
+				date = File.basename(file).scan(/\w+/)[3]
+				month = date[0..1].to_i
+				day = date[2..3].to_i
+				year = "20#{date[4..5]}".to_i
+
+				parse_date.include?(Date.new(year,month,day))
 			else
 				date = File.basename(file).scan(/\w+/)[3]
 				month = date[0..1].to_i
@@ -89,9 +100,14 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			# Find.find('lib/bol/') do |path|		
-			Find.find('/media/bol/') do |path|
-				next if File.basename(path).match(/^(\w+)-(\d+)-(\d+)-(\d+)?/).nil?
+			Find.find('lib/bol/') do |path|		
+			# Find.find('/media/bol/') do |path|
+				next if !File.file?(path)
+				next if File.basename(path).match(/.pdf/).nil?
+
+				unless params[:carrier].downcase == "all carriers"
+					next if File.basename(path).match(/^(\w+)-(\d+)-(\d+)-(\d+)?/).nil?
+				end
 				next if !File.basename(path).match("signature").nil?
 
 				if params[:show_signed] == "1"
@@ -116,8 +132,8 @@ class Endura::API < Grape::API
 		get :carrier_images do
 			file_images = []
 			file_names = []
-			# Find.find('lib/bol/images/') do |path|
-			Find.find('/media/bol/images/') do |path|
+			Find.find('lib/bol/images/') do |path|
+			# Find.find('/media/bol/images/') do |path|
 				next if File.basename(path).include?('images')
 				file_images << Base64.encode64(File.binread(path))
 				file_names << File.basename(path).match(/\w+/)[0]
