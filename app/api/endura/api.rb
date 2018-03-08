@@ -146,7 +146,7 @@ class Endura::API < Grape::API
 			Find.find('/media/bol/images/') do |path|
 				next if File.basename(path).include?('images')
 				file_images << Base64.encode64(File.binread(path))
-				file_names << File.basename(path).match(/\w+/)[0]
+				file_names << File.basename(path).match(/[^.+]+/)[0]
 			end
 
 			{file_images: file_images, file_names: file_names}
