@@ -120,7 +120,7 @@ class Endura::API < Grape::API
 				next if File.basename(path).match(/.pdf/).nil?
 
 				unless params[:carrier].downcase == "all carriers"
-					next if File.basename(path).match(/^(\w+)-(\d+)-(\d+)-(\d+)?/).nil?
+					next if File.basename(path).match(/[^-$]*/).nil?
 				end
 				next if !File.basename(path).match("signature").nil?
 
