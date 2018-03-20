@@ -493,6 +493,14 @@ class Endura::API < Grape::API
 			return result
 		end
 
+		desc 'Get list of DOD for customer'
+		get :dods do
+			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapidodlist.p").get
+			result = JSON.parse(result, :quirks_mode => true)
+
+			return result
+		end
+
 		desc 'Post scanned VMI tag to QAD'
 		post :submit_vmi_tag do
 			result = HttpRequest.new("http://#{@qadenv}.endura.enduraproducts.com/cgi-bin/#{@apienv}/xxapidod.p?dod=#{params[:distribution_num]}&user=#{params[:user]}&tags=#{params[:tags]},&action=#{params[:action]}").get
