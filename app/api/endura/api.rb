@@ -32,36 +32,40 @@ class Endura::API < Grape::API
 		end
 
 		def validate_file_exists(file, carrier, parse_date)
-			if parse_date == "all"
-				if carrier.downcase == "all carriers"
-					true
+			begin
+				if parse_date == "all"
+					if carrier.downcase == "all carriers"
+						true
+					else
+						file.downcase.include?(carrier.downcase)
+					end
+				elsif carrier.downcase == "all carriers"
+					date = File.basename(file).scan(/\w+/)[3]
+
+					if date.nil? || date.length > 6
+						false
+					else
+						month = date[0..1].to_i
+						day = date[2..3].to_i
+						year = "20#{date[4..5]}".to_i
+
+						parse_date.include?(Date.new(year,month,day))
+					end
 				else
-					file.downcase.include?(carrier.downcase)
+					date = File.basename(file).scan(/\w+/)[3]
+
+					if date.nil? || date.length > 6
+						false
+					else
+						month = date[0..1].to_i
+						day = date[2..3].to_i
+						year = "20#{date[4..5]}".to_i
+
+						file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+					end
 				end
-			elsif carrier.downcase == "all carriers"
-				date = File.basename(file).scan(/\w+/)[3]
-
-				if date.nil? || date.length > 6
-					false
-				else
-					month = date[0..1].to_i
-					day = date[2..3].to_i
-					year = "20#{date[4..5]}".to_i
-
-					parse_date.include?(Date.new(year,month,day))
-				end
-			else
-				date = File.basename(file).scan(/\w+/)[3]
-
-				if date.nil? || date.length > 6
-					false
-				else
-					month = date[0..1].to_i
-					day = date[2..3].to_i
-					year = "20#{date[4..5]}".to_i
-
-					file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
-				end
+			rescue
+				false
 			end
 		end
 	end
