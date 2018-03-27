@@ -37,7 +37,7 @@ class Endura::API < Grape::API
 					if carrier.downcase == "all carriers"
 						if File.basename(file).match(/[^-$]*/).nil? ||
 							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "fedex" ||
-							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "southeast" ||
+							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "southest" ||
 							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "ward" ||
 							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "usf"
 							false
