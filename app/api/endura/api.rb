@@ -31,15 +31,20 @@ class Endura::API < Grape::API
 			end
 		end
 
+		def file_exceptions(file)
+			file_name = File.basename(file).match(/[^-$]*/)
+			file_name.nil? ||
+			file_name[0].strip.downcase == "fedex" ||
+			file_name[0].strip.downcase == "southest" ||
+			file_name[0].strip.downcase == "ward" ||
+			file_name[0].strip.downcase == "usf"
+		end
+
 		def validate_file_exists(file, carrier, parse_date)
 			begin
 				if parse_date == "all"
 					if carrier.downcase == "all carriers"
-						if File.basename(file).match(/[^-$]*/).nil? ||
-							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "fedex" ||
-							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "southest" ||
-							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "ward" ||
-							 File.basename(file).match(/[^-$]*/)[0].strip.downcase == "usf"
+						if file_exceptions(file)
 							false
 						else
 							true
@@ -48,16 +53,20 @@ class Endura::API < Grape::API
 						file.downcase.include?(carrier.downcase)
 					end
 				elsif carrier.downcase == "all carriers"
-					date = File.basename(file).scan(/\w+/)[3]
-
-					if date.nil? || date.length > 6
+					if file_exceptions(file)
 						false
 					else
-						month = date[0..1].to_i
-						day = date[2..3].to_i
-						year = "20#{date[4..5]}".to_i
+						date = File.basename(file).scan(/\w+/)[3]
 
-						parse_date.include?(Date.new(year,month,day))
+						if date.nil? || date.length > 6
+							false
+						else
+							month = date[0..1].to_i
+							day = date[2..3].to_i
+							year = "20#{date[4..5]}".to_i
+
+							parse_date.include?(Date.new(year,month,day))
+						end
 					end
 				else
 					date = File.basename(file).scan(/\w+/)[3]
