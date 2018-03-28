@@ -35,9 +35,31 @@ class Endura::API < Grape::API
 			file_name = File.basename(file).match(/[^-$]*/)
 			file_name.nil? ||
 			file_name[0].strip.downcase == "fedex" ||
+			file_name[0].strip.downcase == "fedex fr" ||
 			file_name[0].strip.downcase == "southest" ||
+			file_name[0].strip.downcase == "sefl" ||
 			file_name[0].strip.downcase == "ward" ||
-			file_name[0].strip.downcase == "usf"
+			file_name[0].strip.downcase == "usf" ||
+			file_name[0].strip.downcase == "usf holl" ||
+			file_name[0].strip.downcase == "holland"
+		end
+
+		def included_carrier(file_name_regex, carrier)
+			return false if file_name_regex.nil?
+
+			file_name = file_name_regex[0].downcase
+
+			case carrier.downcase
+
+			when 'fedex'
+				file_name == "fedex fr" || file_name == "fedex"
+			when 'usf'
+				file_name == "usf holl" || file_name == "holland" || file_name == "usf"
+			when 'southest'
+				file_name == 'sefl' || file_name == 'southest'
+			else
+				false
+			end
 		end
 
 		def validate_file_exists(file, carrier, parse_date)
@@ -78,10 +100,14 @@ class Endura::API < Grape::API
 						day = date[2..3].to_i
 						year = "20#{date[4..5]}".to_i
 
+						included_carrier(File.basename(file).match(/[^-$]*/), carrier)
+						return if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
+
 						file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
 					end
 				end
-			rescue
+			rescue StandardError => error
+				p error
 				false
 			end
 		end
@@ -131,8 +157,8 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			# Find.find('lib/bol/') do |path|		
-			Find.find('/media/bol/') do |path|
+			Find.find('lib/bol/') do |path|		
+			# Find.find('/media/bol/') do |path|
 				next if !File.file?(path)
 				next if File.basename(path).match(/.pdf/).nil?
 
@@ -163,8 +189,8 @@ class Endura::API < Grape::API
 		get :carrier_images do
 			file_images = []
 			file_names = []
-			# Find.find('lib/bol/images/') do |path|
-			Find.find('/media/bol/images/') do |path|
+			Find.find('lib/bol/images/') do |path|
+			# Find.find('/media/bol/images/') do |path|
 				next if File.basename(path).include?('images')
 				file_images << Base64.encode64(File.binread(path))
 				file_names << File.basename(path).match(/[^.+]+/)[0]
