@@ -97,7 +97,7 @@ class Endura::API < Grape::API
 				else
 					date = File.basename(file).scan(/[^-$]*\w/)[3]
 
-					if date.nil? || date.length > 6
+					if date.nil?
 						false
 					else
 						date = date.match(/\d+/)[0]
