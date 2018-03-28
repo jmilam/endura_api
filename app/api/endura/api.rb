@@ -72,7 +72,11 @@ class Endura::API < Grape::API
 							true
 						end
 					else
-						file.downcase.include?(carrier.downcase)
+						if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
+							file.downcase.include?(carrier.downcase)
+						else
+							true
+						end
 					end
 				elsif carrier.downcase == "all carriers"
 					if file_exceptions(file)
@@ -100,10 +104,11 @@ class Endura::API < Grape::API
 						day = date[2..3].to_i
 						year = "20#{date[4..5]}".to_i
 
-						included_carrier(File.basename(file).match(/[^-$]*/), carrier)
-						return if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
-
-						file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+						if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
+							file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+						else
+							parse_date.include?(Date.new(year,month,day))
+						end
 					end
 				end
 			rescue StandardError => error
