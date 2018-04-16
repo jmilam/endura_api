@@ -278,8 +278,8 @@ class Endura::API < Grape::API
 				end
 
 				response = {success: true}
-			rescue
-				response = {success: false, error: "There was an error assigning truck load number. Please try again"}
+			rescue StandardError => error
+				response = {success: false, error: "There was an error assigning truck load number. Please try again. Error: #{error}"}
 			end
 			response
 		end
