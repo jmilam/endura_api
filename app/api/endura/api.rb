@@ -267,9 +267,11 @@ class Endura::API < Grape::API
 
 		desc 'Assign truck to BOL'
 		get :assign_truck do
+			folder_location = "media/bol"
+			# folder_location = "lib/bol"
 			params[:assigned].each do |file_hash|
-				Find.find("lib/bol/#{file_hash[0]}") do |path|
-					FileUtils.mv(path, "lib/bol/#{file_hash[1]}")
+				Find.find("#{folder_location}/#{file_hash[0]}") do |path|
+					FileUtils.mv(path, "#{folder_location}/#{file_hash[1]}")
 				end
 			end
 
