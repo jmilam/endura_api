@@ -172,8 +172,8 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			Find.find('/media/bol/') do |path|
-			#Find.find('lib/bol/') do |path|
+			# Find.find('/media/bol/') do |path|
+			Find.find('lib/bol/') do |path|
 				next if !File.file?(path)
 				next if File.basename(path).match(/.pdf/).nil?
 
@@ -208,8 +208,8 @@ class Endura::API < Grape::API
 		get :carrier_images do
 			file_images = []
 			file_names = []
-			# Find.find('lib/bol/images/') do |path|
-			Find.find('/media/bol/images/') do |path|
+			Find.find('lib/bol/images/') do |path|
+			# Find.find('/media/bol/images/') do |path|
 				next if File.basename(path).include?('images')
 				file_images << Base64.encode64(File.binread(path))
 				file_names << File.basename(path).match(/[^.+]+/)[0]
@@ -263,6 +263,17 @@ class Endura::API < Grape::API
 			rescue StandardError => error
 				{success: false, message: error}
 			end
+		end
+
+		desc 'Assign truck to BOL'
+		get :assign_truck do
+			params[:assigned].each do |file_hash|
+				Find.find("lib/bol/#{file_hash[0]}") do |path|
+					FileUtils.mv(path, "lib/bol/#{file_hash[1]}")
+				end
+			end
+
+			{success: true}
 		end
 	end
 
