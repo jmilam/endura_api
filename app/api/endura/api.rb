@@ -122,6 +122,10 @@ class Endura::API < Grape::API
 				false
 			end
 		end
+
+		def bol_signed?(path)
+			Pathname.new("#{path}-signed.pdf").exist?
+		end
 	end
 
 	resource do
@@ -168,8 +172,8 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			# Find.find('lib/bol/') do |path|		
 			Find.find('/media/bol/') do |path|
+			# Find.find('lib/bol/') do |path|
 				next if !File.file?(path)
 				next if File.basename(path).match(/.pdf/).nil?
 
@@ -184,6 +188,10 @@ class Endura::API < Grape::API
 				end
 
 				next if !validate_file_exists(path, params[:carrier], parse_date(params[:date_range]))
+
+				if File.basename(path).match("signed").nil?
+					next if bol_signed?(path) 
+				end
 
 				if params[:specific_file] != 0
 					next if File.basename(path).match(params[:search_criteria]).nil?
@@ -255,6 +263,25 @@ class Endura::API < Grape::API
 			rescue StandardError => error
 				{success: false, message: error}
 			end
+		end
+
+		desc 'Assign truck to BOL'
+		get :assign_truck do
+			response = nil
+			begin
+				folder_location = "/media/bol"
+				# folder_location = "lib/bol"
+				params[:assigned].each do |file_hash|
+					Find.find("#{folder_location}/#{file_hash[0]}") do |path|
+						FileUtils.mv(path, "#{folder_location}/#{file_hash[1]}")
+					end
+				end
+
+				response = {success: true}
+			rescue StandardError => error
+				response = {success: false, error: "There was an error assigning truck load number. Please try again. Error: #{error}"}
+			end
+			response
 		end
 	end
 
