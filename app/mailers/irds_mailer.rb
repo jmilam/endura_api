@@ -17,8 +17,17 @@ class IrdsMailer < ApplicationMailer
 		
 		row_count = 0
 		export_data.split("\n").each do |row_data|			
-			unless row_count == 0
+			unless row_count == 0 
 				sheet1.row(row_count).replace row_data.split(",")
+				row = sheet1.row(row_count)
+
+				(26, 27, 56, 57, 58).each do |idx|
+					row[idx] = row[idx].to_i
+				end
+
+				(32, 33, 59).each do |idx|
+					row[idx] = row[idx].to_f.round(2)
+				end
 			end
 			row_count += 1
 		end
