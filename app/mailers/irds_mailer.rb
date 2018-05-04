@@ -19,15 +19,15 @@ class IrdsMailer < ApplicationMailer
 		export_data.split("\n").each_with_idx do |row_data, idx|			
 			unless row_count == 0 
 				sheet1.row(row_count).replace row_data.split(",")
-				row = sheet1.row(row_count)
+				# row = sheet1.row(row_count)
 
-				(26, 27, 56, 57, 58).each do |idx|
-					row[idx] = row[idx].to_i
-				end
+				# (26, 27, 56, 57, 58).each do |idx|
+				# 	row[idx] = row[idx].to_i
+				# end
 
-				(32, 33, 59).each do |idx|
-					row[idx] = row[idx].to_f.round(2)
-				end
+				# (32, 33, 59).each do |idx|
+				# 	row[idx] = row[idx].to_f.round(2)
+				# end
 			end
 			row_count += 1
 		end
