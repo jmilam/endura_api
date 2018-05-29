@@ -44,4 +44,9 @@ class IrdsMailer < ApplicationMailer
   	mail(from: from, to: to, subject: subject)
   	File.delete(file_loc)
   end
+
+  def import_complete(status)
+  	@status = status
+  	mail(from: 'irdsimport@enduraproducts.com', to: 'jasonlmilam@gmail.com', subject: 'Import Complete')
+  end
 end

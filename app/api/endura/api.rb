@@ -677,6 +677,11 @@ class Endura::API < Grape::API
 		end
 
 		resource :irds do
+			desc 'import complete status'
+			get :import_complete do
+				IrdsMailer.import_complete(params[:status]).deliver
+			end
+
 			desc 'export'
 			post :export do
 				export_data = Base64.decode64(params[:export_data])
