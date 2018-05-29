@@ -47,6 +47,7 @@ class IrdsMailer < ApplicationMailer
 
   def import_complete(status)
   	@status = status
-  	mail(from: 'irdsimport@enduraproducts.com', to: 'jasonlmilam@gmail.com', subject: 'Import Complete')
+
+  	mail(from: 'irdsimport@enduraproducts.com', to: 'mdraughn@enduraproducts.com', cc: 'jasonlmilam@gmail.com', subject: 'Import Complete w/ status')
   end
 end
