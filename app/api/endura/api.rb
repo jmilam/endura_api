@@ -14,6 +14,9 @@ class Endura::API < Grape::API
 			@apienv = "prodapi"
 			@time_off_url = "http://request_off.enduraproducts.com"
 		end
+
+		@lib_path = "/media/bol"
+		# @lib_path = "lib/bol"
 	end
 
 	helpers do
@@ -124,7 +127,7 @@ class Endura::API < Grape::API
 		end
 
 		def bol_signed?(path)
-			Pathname.new("#{path}-signed.pdf").exist?
+			Pathname.new("#{path.gsub('.pdf','')}-signed.pdf").exist?
 		end
 	end
 
@@ -172,8 +175,7 @@ class Endura::API < Grape::API
 		get :search do
 			files = []
 			file_images = []
-			Find.find('/media/bol/') do |path|
-			# Find.find('lib/bol/') do |path|
+			Find.find(@lib_path) do |path|
 				next if !File.file?(path)
 				next if File.basename(path).match(/.pdf/).nil?
 
@@ -208,8 +210,7 @@ class Endura::API < Grape::API
 		get :carrier_images do
 			file_images = []
 			file_names = []
-			# Find.find('lib/bol/images/') do |path|
-			Find.find('/media/bol/images/') do |path|
+			Find.find(@lib_path + '/images/') do |path|
 				next if File.basename(path).include?('images')
 				file_images << Base64.encode64(File.binread(path))
 				file_names << File.basename(path).match(/[^.+]+/)[0]
@@ -225,7 +226,7 @@ class Endura::API < Grape::API
 			content_type "application/pdf"
 			header 'Content-Disposition', "attachment; filename*=UTF-8''#{params[:file_name]}"
 
-			Find.find("/media/bol/#{params[:file_name]}") do |path|
+			Find.find("#{@lib_path}/#{params[:file_name]}") do |path|
 				file = File.binread(path)
 			end
 			file
@@ -235,6 +236,7 @@ class Endura::API < Grape::API
 		post :save_signature do
 			begin
 				shipper_signature, carrier_signature = "#{params[:pdf_file_name]}_shipper_signature.png", "#{params[:pdf_file_name]}_carrier_signature.png"
+				truck_numbers = params[:truck_numbers]
 				File.open("/media/bol/signatures/#{shipper_signature}", 'wb') do |f|
 					f.write(params[:bol_signature][:tempfile].read)
 				end
@@ -244,6 +246,8 @@ class Endura::API < Grape::API
 				end
 
 				Prawn::Document.generate("/media/bol/signatures/#{params[:pdf_file_name]}_signature.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
+
+					draw_text truck_numbers, :at => [200,655], :width => 250
 
 					Find.find("/media/bol/signatures/#{shipper_signature}") do |img_file|
 						image img_file, :at => [0,75], :width => 250 
@@ -257,7 +261,8 @@ class Endura::API < Grape::API
 				my_prawn_pdf = CombinePDF.new
 				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
-				my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name]}-signed.pdf"
+				my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name].gsub('.pdf', '')}-signed.pdf"
+				my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name].gsub('.pdf', '')}-signed-#{truck_numbers}.pdf"
 
 				{success: true}
 			rescue StandardError => error
