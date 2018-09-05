@@ -99,24 +99,22 @@ class Endura::API < Grape::API
 					end
 				else
 					date = File.basename(file).scan(/[^-$]*\w/)[3]
+					date2 = File.basename(file).scan(/[^-$]*\w/)[4]
 
 					if date.nil?
 						false
 					else
-						date = date.match(/\d+/)[0]
+						date_no_file_extension = date.match(/\d+/)[0]
 
-						if date.length > 6
-							false
-						else
-							month = date[0..1].to_i
-							day = date[2..3].to_i
-							year = "20#{date[4..5]}".to_i
-
-							if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
-								file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+						if date_no_file_extension.length > 6
+							date2 = date2.match(/\d+/)[0]
+							if date2.length > 6
+								false
 							else
-								parse_date.include?(Date.new(year,month,day))
+								display_bol_based_off_of_date(date2, carrier, file, parse_date)
 							end
+						else
+							display_bol_based_off_of_date(date, carrier, file, parse_date)
 						end
 					end
 				end
@@ -128,6 +126,18 @@ class Endura::API < Grape::API
 
 		def bol_signed?(path)
 			Pathname.new("#{path.gsub('.pdf','')}-signed.pdf").exist?
+		end
+
+		def display_bol_based_off_of_date(date,carrier,file, parse_date)
+			month = date[0..1].to_i
+			day = date[2..3].to_i
+			year = "20#{date[4..5]}".to_i
+
+			if included_carrier(File.basename(file).match(/[^-$]*/), carrier) == false
+				file.downcase.include?(carrier.downcase) && parse_date.include?(Date.new(year,month,day))
+			else
+				parse_date.include?(Date.new(year,month,day))
+			end
 		end
 	end
 
