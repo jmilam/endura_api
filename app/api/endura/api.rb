@@ -15,15 +15,15 @@ class Endura::API < Grape::API
 			@time_off_url = "http://request_off.enduraproducts.com"
 		end
 
-		@lib_path = "/media/bol"
-		# @lib_path = "lib/bol"
+		# @lib_path = "/media/bol"
+		@lib_path = "lib/bol"
 	end
 
 	helpers do
 		def parse_date(date)
 			case date.downcase
 
-			when "" || "today"
+			when "", "today"
 				[Date.today]
 			when "one week"
 				((Date.today - 1.week)..Date.today)
@@ -284,8 +284,8 @@ class Endura::API < Grape::API
 		get :assign_truck do
 			response = nil
 			begin
-				folder_location = "/media/bol"
-				# folder_location = "lib/bol"
+				# folder_location = "/media/bol"
+				folder_location = "lib/bol"
 				params[:assigned].each do |file_hash|
 					Find.find("#{folder_location}/#{file_hash[0]}") do |path|
 						FileUtils.mv(path, "#{folder_location}/#{file_hash[1]}")
