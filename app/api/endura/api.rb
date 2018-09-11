@@ -246,7 +246,7 @@ class Endura::API < Grape::API
 		post :save_signature do
 			begin
 				shipper_signature, carrier_signature = "#{params[:pdf_file_name]}_shipper_signature.png", "#{params[:pdf_file_name]}_carrier_signature.png"
-				truck_numbers = params[:truck_numbers]
+				# truck_numbers = params[:truck_numbers]
 				File.open("/media/bol/signatures/#{shipper_signature}", 'wb') do |f|
 					f.write(params[:bol_signature][:tempfile].read)
 				end
@@ -257,7 +257,7 @@ class Endura::API < Grape::API
 
 				Prawn::Document.generate("/media/bol/signatures/#{params[:pdf_file_name]}_signature.pdf", :page_size => "A4", :template => "/media/bol/#{params[:pdf_file_name]}") do
 
-					draw_text truck_numbers, :at => [200,655], :width => 250
+					# draw_text truck_numbers, :at => [200,655], :width => 250
 
 					Find.find("/media/bol/signatures/#{shipper_signature}") do |img_file|
 						image img_file, :at => [0,75], :width => 250 
@@ -272,7 +272,7 @@ class Endura::API < Grape::API
 				my_prawn_pdf << CombinePDF.load("/media/bol/#{params[:pdf_file_name]}")
 				my_prawn_pdf.pages.each { |page| page << signature}
 				my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name].gsub('.pdf', '')}-signed.pdf"
-				my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name].gsub('.pdf', '')}-signed-#{truck_numbers}.pdf"
+				# my_prawn_pdf.save "/media/bol/#{params[:pdf_file_name].gsub('.pdf', '')}-signed-#{truck_numbers}.pdf"
 
 				{success: true}
 			rescue StandardError => error
