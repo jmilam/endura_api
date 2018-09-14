@@ -201,9 +201,9 @@ class Endura::API < Grape::API
 
 				next if !validate_file_exists(path, params[:carrier], parse_date(params[:date_range]))
 
-				if File.basename(path).match("signed").nil?
-					next if bol_signed?(path) 
-				end
+				# if File.basename(path).match("signed").nil?
+				# 	next if bol_signed?(path) 
+				# end
 
 				if params[:specific_file] != 0
 					next if File.basename(path).match(params[:search_criteria]).nil?
