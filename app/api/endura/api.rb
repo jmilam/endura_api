@@ -236,7 +236,7 @@ class Endura::API < Grape::API
 			content_type "application/pdf"
 			header 'Content-Disposition', "attachment; filename*=UTF-8''#{params[:file_name]}"
 
-			Find.find("#{@lib_path}/#{params[:file_name]}") do |path|
+			Find.find("#{@lib_path}/#{params[:file_name].gsub('.pdf','')}.pdf") do |path|
 				file = File.binread(path)
 			end
 			file
