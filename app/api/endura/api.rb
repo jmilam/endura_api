@@ -257,9 +257,9 @@ class Endura::API < Grape::API
 		desc 'This saves signature and creates new pdf and stores'
 		post :save_signature do
 			if to_boolean(params[:test_app].to_i)
-				@lib_path = "/media/bol_test"
+				lib_path = "/media/bol_test"
 			else
-				@lib_path = "/media/bol"
+				lib_path = "/media/bol"
 			end
 			begin
 				shipper_signature, carrier_signature = "#{params[:pdf_file_name]}_shipper_signature.png", "#{params[:pdf_file_name]}_carrier_signature.png"
