@@ -15,11 +15,23 @@ class Endura::API < Grape::API
 			@time_off_url = "http://request_off.enduraproducts.com"
 		end
 
-		@lib_path = "/media/bol"
+		if to_boolean(params[:test_app].to_i)
+			@lib_path = "/media/bol_test"
+		else
+			@lib_path = "/media/bol"			
+		end
 		# @lib_path = "lib/bol"
 	end
 
 	helpers do
+		def to_boolean(param)
+			if param == 1
+				true
+			else
+				false
+			end
+		end
+
 		def parse_date(date)
 			case date.downcase
 
