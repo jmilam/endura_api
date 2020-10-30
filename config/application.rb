@@ -16,13 +16,8 @@ module EnduraApi
 		config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
 
 		config.action_mailer.smtp_settings = {
-		  	:address        => 'ncmail1.enduraproducts.com',
-		    :port           => '25',
-		    :authentication => :login,
-		    :user_name      => 'notifications',
-		    :password       => '3ndur@notification',
-		    :domain         => 'enduraproducts.com',
-		    :enable_starttls_auto => true
+		  	:address        => 'nc-mail.endura.enduraproducts.com',
+        :port           => '25',
 		}
   end
 end
