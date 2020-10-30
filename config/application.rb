@@ -18,11 +18,6 @@ module EnduraApi
 		config.action_mailer.smtp_settings = {
 		  	:address        => 'nc-mail.endura.enduraproducts.com',
 		    :port           => '25',
-		    # :authentication => :login,
-		    # :user_name      => 'notifications',
-		    # :password       => '3ndur@notification',
-		    # :domain         => 'enduraproducts.com',
-		    # :enable_starttls_auto => true
 		}
   end
 end
